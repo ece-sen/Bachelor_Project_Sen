@@ -1,0 +1,25 @@
+# Virtual environment
+venv/
+
+# Spider dataset - too large for GitHub
+data/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Model cache
+.cache/
+models/
+
+# Environment variables
+.env
