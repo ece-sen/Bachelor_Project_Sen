@@ -13,6 +13,10 @@ def extract_schema_from_db(db_path: str) -> str:
 
     parts = []
 
+    # Add the database name (folder name) 
+    db_name = Path(db_path).parent.name
+    parts.append(db_name.replace("_", " "))
+
     # Get all table names from SQLite's internal master table
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tables = [row[0] for row in cursor.fetchall()]

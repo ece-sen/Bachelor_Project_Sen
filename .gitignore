@@ -1,5 +1,6 @@
 # Virtual environment
 venv/
+.venv/
 
 # Spider dataset - too large for GitHub
 data/
@@ -19,7 +20,6 @@ __pycache__/
 
 # Model cache
 .cache/
-models/
 
 # Environment variables
 .env
