@@ -2,11 +2,80 @@ import sqlite3
 import re
 from pathlib import Path
 
+# Try removing generic words, stopwords
+STOPWORDS =  {
+    "id", "name", "date", "time", "type", "code", "status",
+    "description", "comment", "notes", "created", "updated",
+    "the", "a", "an", "and", "or", "but", "in", "on", "at",
+    "to", "for", "of", "with", "by"
+}
 
-def extract_schema_from_db(db_path: str) -> str:
+class Preprocessor:
+    """
+    Handles all text preprocessing before similarity scoring.
+
+    A single Preprocessor instance is created once and passed to
+    every selector. This guarantees schemas and queries are always
+    processed identically.
+
+    Parameters:
+        remove_generic: removes stopwords from text
+        lemmatize:      reduces words to base form (singers → singer)
+
+    N-grams are not handled here — they are a vectorizer parameter
+    inside TFIDFSelector, not a text transformation.
+    """
+
+    def __init__(self, remove_generic: bool = False, lemmatize: bool = False):
+        self.remove_generic = remove_generic
+        self.lemmatize = lemmatize
+
+        # Only load lemmatizer if needed
+        self._lemmatizer = None
+        if lemmatize:
+            from nltk.stem import WordNetLemmatizer
+            self._lemmatizer = WordNetLemmatizer()
+
+    def process(self, text: str) -> str:
+        """
+        Applies all configured preprocessing steps to any text.
+        Called on schema texts at load time and on queries at score time.
+        Same method, same result — no mismatch possible.
+        """
+        text = text.lower()
+
+        if self.remove_generic:
+            tokens = text.split()
+            tokens = [t for t in tokens if t not in STOPWORDS]
+            text = " ".join(tokens)
+
+        if self.lemmatize and self._lemmatizer:
+            tokens = text.split()
+            tokens = [self._lemmatizer.lemmatize(t) for t in tokens]
+            text = " ".join(tokens)
+
+        return text
+
+    def __repr__(self):
+        """
+        Shows preprocessor settings clearly in print outputs.
+        Useful for labeling experiment results.
+        """
+        parts = []
+        if self.remove_generic:
+            parts.append("stopwords")
+        if self.lemmatize:
+            parts.append("lemmatize")
+        return f"Preprocessor({', '.join(parts) if parts else 'baseline'})"
+
+
+def extract_schema_from_db(db_path: str,  preprocessor: Preprocessor = None) -> str:
     """
     Extracts schema text directly from a SQLite file.
     Queries SQLite's internal metadata via PRAGMA table_info.
+
+    Applies preprocessor if provided.
+
     """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -34,10 +103,15 @@ def extract_schema_from_db(db_path: str) -> str:
             parts.append(col[1].replace("_", " "))
 
     conn.close()
-    return " ".join(parts)
+    text = " ".join(parts)
+
+    if preprocessor:
+        text = preprocessor.process(text)
+
+    return text
 
 
-def load_schemas(database_dir: str) -> dict:
+def load_schemas(database_dir: str, preprocessor: Preprocessor = None) -> dict:
     """
     Walks the Spider database directory and builds schema text
     for every SQLite file found.
@@ -51,7 +125,7 @@ def load_schemas(database_dir: str) -> dict:
             sqlite_files = list(db_folder.glob("*.sqlite"))
             if sqlite_files:
                 db_id = db_folder.name
-                schemas[db_id] = extract_schema_from_db(str(sqlite_files[0]))
+                schemas[db_id] = extract_schema_from_db(str(sqlite_files[0]), preprocessor=preprocessor)
 
     return schemas
 
@@ -94,10 +168,10 @@ if __name__ == "__main__":
         schema_words = clean_words(schemas[db_id])
         query_words = clean_words(q["question"])
         overlap = query_words & schema_words
-        divergence = query_words - schema_words
-        if len(divergence) > 2:
+        divergence = (query_words - schema_words) - STOPWORDS
+        if len(divergence) > 1:
             print(f"Query:      {q['question']}")
             print(f"DB:         {db_id}")
-            print(f"Overlap:    {overlap}")
+            print(f"Overlap:    {overlap - STOPWORDS}")
             print(f"No match:   {divergence}")
             print()
