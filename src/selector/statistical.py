@@ -3,7 +3,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from src.selector.schema_repr import load_schemas, load_queries
+from src.selector.schema_repr import load_schemas, load_queries, Preprocessor
 from src.evaluation.metrics import evaluate
 from src.selector.lexical import LexicalSelector
 
@@ -33,16 +33,24 @@ class TFIDFSelector:
     Similarity is measured using cosine similarity, it measures
     the angle between two vectors in TF-IDF space, which is more
     meaningful than raw dot product because it is length-normalized.
+    
+    UPDATE:
+    Accepts a Preprocessor instance which is applied to queries
+    at score time, matching whatever preprocessing was applied
+    to schemas during load_schemas.
     """
 
-    def __init__(self, schemas: dict):
+    def __init__(self, schemas: dict, preprocessor: Preprocessor = None, ngram_range: tuple = (1, 1)):
         """
         Fits the TF-IDF vectorizer on all schemas at initialization.
         This builds the vocabulary and computes IDF weights once.
 
         schemas: dict of { db_id -> schema text }
+        ngram_range: (1,1) unigrams only, (1,2) adds bigrams, (1,3) adds trigrams
+        preprocessor: applied to queries at score time
         """
         self.db_ids = list(schemas.keys())
+        self.preprocessor = preprocessor
         schema_texts = [schemas[db_id] for db_id in self.db_ids]
 
         # TfidfVectorizer handles tokenization, lowercasing internally
@@ -50,7 +58,8 @@ class TFIDFSelector:
         # which prevents very long schemas from dominating
         self.vectorizer = TfidfVectorizer(
             lowercase=True,
-            sublinear_tf=True
+            sublinear_tf=True, 
+            ngram_range=ngram_range
         )
 
         # Fit on all schemas and transform them into TF-IDF vectors
@@ -58,6 +67,8 @@ class TFIDFSelector:
         self.schema_matrix = self.vectorizer.fit_transform(schema_texts)
 
     def score(self, query: str) -> dict:
+        if self.preprocessor:
+            query = self.preprocessor.process(query)
         """
         Returns cosine similarity score between the query and every schema.
         { db_id -> float score }
@@ -85,47 +96,20 @@ class TFIDFSelector:
         return ranked[:top_k]
 
 
-def evaluate(selector, queries: list) -> tuple:
-    """
-    Runs selector on all queries and returns (top1_accuracy, top3_accuracy).
-    Reusable for any selector that has a .rank() method.
-    """
-    top1_correct = 0
-    top3_correct = 0
-
-    for q in queries:
-        question = q["question"]
-        correct_db = q["db_id"]
-        ranked = selector.rank(question, top_k=3)
-
-        if ranked[0][0] == correct_db:
-            top1_correct += 1
-        if correct_db in [db for db, _ in ranked]:
-            top3_correct += 1
-
-    total = len(queries)
-    return top1_correct / total, top3_correct / total
-
-
 if __name__ == "__main__":
-    from src.evaluation.metrics import evaluate
 
-    schemas = load_schemas("data/spider/database")
+    preprocessor = Preprocessor()
+    schemas = load_schemas("data/spider/database", preprocessor=preprocessor)
     queries = load_queries("data/spider/dev.json")
 
-    # Run BM25
     print("Running BM25...")
-    bm25_selector = LexicalSelector(schemas)
-    bm25_top1, bm25_top3 = evaluate(bm25_selector, queries)
+    bm25_top1, bm25_top3 = evaluate(
+        LexicalSelector(schemas, preprocessor=preprocessor), queries)
 
-    # Run TF-IDF
     print("Running TF-IDF...")
-    tfidf_selector = TFIDFSelector(schemas)
-    tfidf_top1, tfidf_top3 = evaluate(tfidf_selector, queries)
+    tfidf_selector = TFIDFSelector(schemas, preprocessor=preprocessor)
 
-     # TF-IDF sanity check on first 5 queries
     print("=== TF-IDF Selector — Sanity Check ===\n")
-    tfidf_selector = TFIDFSelector(schemas)
     for q in queries[:5]:
         question = q["question"]
         correct_db = q["db_id"]
@@ -137,8 +121,8 @@ if __name__ == "__main__":
         print(f"Result:       {'correct' if is_correct else 'wrong'}")
         print()
 
+    tfidf_top1, tfidf_top3 = evaluate(tfidf_selector, queries)
 
-    # Compare
     print("\n=== Comparison ===")
     print(f"{'Method':<10} {'Top-1':>8} {'Top-3':>8}")
     print(f"{'-'*28}")
