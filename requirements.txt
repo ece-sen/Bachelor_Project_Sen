@@ -1,4 +1,3 @@
-sentence-transformers
 scikit-learn
 rank-bm25
 pandas
