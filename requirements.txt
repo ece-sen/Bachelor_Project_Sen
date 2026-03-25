@@ -6,3 +6,6 @@ numpy
 torch
 nltk
 einops
+datasets
+sentence-transformers==2.7.0
+transformers[torch]
