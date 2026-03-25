@@ -27,15 +27,15 @@ def run_experiment(label: str, queries: list,
     """
     schemas = load_schemas("data/spider/database", preprocessor=preprocessor)
 
-    bm25_top1, bm25_top3 = evaluate(
-        LexicalSelector(schemas, preprocessor=preprocessor), queries)
+    bm_r = evaluate(
+        LexicalSelector(schemas, preprocessor=preprocessor, variant="okapi"), queries)
 
-    tfidf_top1, tfidf_top3 = evaluate(
+    tfidf_r = evaluate(
         TFIDFSelector(schemas, preprocessor=preprocessor,
                       ngram_range=ngram_range), queries)
 
-    print(f"{'BM25':<10} {label:<35} {bm25_top1:>8.3f} {bm25_top3:>8.3f}")
-    print(f"{'TF-IDF':<10} {label:<35} {tfidf_top1:>8.3f} {tfidf_top3:>8.3f}")
+    print(f"{'BM25':<10} {label:<35} {bm_r['top1']:>8.3f} {bm_r['top3']:>8.3f}")
+    print(f"{'TF-IDF':<10} {label:<35} {tfidf_r['top1']:>8.3f} {tfidf_r['top3']:>8.3f}")
 
 
 if __name__ == "__main__":
@@ -66,6 +66,6 @@ if __name__ == "__main__":
                    Preprocessor(), ngram_range=(1, 2))
 
     # Experiment 6 — best combination
-    run_experiment("stopwords + lemma + bigrams", queries,
+    run_experiment("stopwords + lemma + bigrams (TF-IDF only)", queries,
                    Preprocessor(remove_generic=True, lemmatize=True),
                    ngram_range=(1, 2))

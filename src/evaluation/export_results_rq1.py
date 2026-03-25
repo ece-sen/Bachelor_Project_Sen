@@ -7,7 +7,7 @@ Each JSON file contains full details for every query:
     - top-1 and top-3 predictions
     - correctness flag
 
-Output: results/method_name.json
+Output: results/feature_results/method_name.json
 """
 import sys
 import os
@@ -61,7 +61,7 @@ def export_method(
                   calculation so query_used matches what the
                   selector actually sees
     """
-    os.makedirs("results", exist_ok=True)
+    os.makedirs("results/feature_results", exist_ok=True)
 
     output = {
         "method": method_name,
@@ -119,7 +119,7 @@ def export_method(
     output["top1_accuracy"] = round(top1_correct / len(queries), 4)
     output["top1_correct_count"] = top1_correct
 
-    filepath = f"results/{method_name.replace(' ', '_')}.json"
+    filepath = f"results/feature_results/{method_name.replace(' ', '_')}.json"
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
@@ -295,4 +295,4 @@ if __name__ == "__main__":
         raw_schemas, queries, preprocessor=None
     )
 
-    print("\nDone. JSON files saved in results/")
+    print("\nDone. JSON files saved in results/feature_results/")

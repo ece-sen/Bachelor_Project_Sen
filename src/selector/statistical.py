@@ -96,20 +96,17 @@ class TFIDFSelector:
         return ranked[:top_k]
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
 
-    preprocessor = Preprocessor()
+    preprocessor = Preprocessor(remove_generic=True, lemmatize=True)
     schemas = load_schemas("data/spider/database", preprocessor=preprocessor)
     queries = load_queries("data/spider/dev.json")
-
-    print("Running BM25...")
-    bm25_top1, bm25_top3 = evaluate(
-        LexicalSelector(schemas, preprocessor=preprocessor), queries)
 
     print("Running TF-IDF...")
     tfidf_selector = TFIDFSelector(schemas, preprocessor=preprocessor)
 
-    print("=== TF-IDF Selector — Sanity Check ===\n")
+    # Sanity check on first 5 queries
+    print(f"=== TF-IDF Selector with preprocessor values {preprocessor.remove_generic, preprocessor.lemmatize} — Sanity Check ===\n")
     for q in queries[:5]:
         question = q["question"]
         correct_db = q["db_id"]
@@ -121,10 +118,10 @@ if __name__ == "__main__":
         print(f"Result:       {'correct' if is_correct else 'wrong'}")
         print()
 
-    tfidf_top1, tfidf_top3 = evaluate(tfidf_selector, queries)
-
-    print("\n=== Comparison ===")
-    print(f"{'Method':<10} {'Top-1':>8} {'Top-3':>8}")
-    print(f"{'-'*28}")
-    print(f"{'BM25':<10} {bm25_top1:>8.3f} {bm25_top3:>8.3f}")
-    print(f"{'TF-IDF':<10} {tfidf_top1:>8.3f} {tfidf_top3:>8.3f}")
+    # Full evaluation
+    print("=== Full Dev Set Evaluation ===\n")
+    r = evaluate(tfidf_selector, queries)
+    print(f"Total queries : {len(queries)}")
+    print(f"Top-1 Accuracy: {r['top1']:.3f}")
+    print(f"Top-3 Accuracy: {r['top3']:.3f}")
+    print(f"MRR           : {r['mrr']:.3f}")

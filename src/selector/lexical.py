@@ -18,29 +18,28 @@ class LexicalSelector:
     - Document length normalization: longer schemas aren't unfairly favored
     """
 
-    def __init__(self, schemas: dict, preprocessor: Preprocessor = None, variant: str = "okapi"):
+    VARIANTS = {
+        "okapi": BM25Okapi,
+        "plus":  BM25Plus,
+        "l":     BM25L,
+    }
+
+    def __init__(self, schemas: dict, preprocessor: Preprocessor = None, *, variant: str):
         """
         Builds the BM25 index at initialization time.
         This happens once — then it can be queried as many times as want.
 
         schemas: dict of { db_id -> schema text }
+        variant: one of "okapi", "plus", "l"
         """
+        if variant not in self.VARIANTS:
+            raise ValueError(f"Unknown BM25 variant '{variant}'. Choose from: {list(self.VARIANTS)}")
+
         self.db_ids = list(schemas.keys())
         self.preprocessor = preprocessor
 
-        tokenized_schemas = []
-        for db_id in self.db_ids:
-            text = schemas[db_id]
-            # schemas are already preprocessed by load_schemas
-            # so here we just tokenize
-            tokenized_schemas.append(text.lower().split())
-            
-        if variant == "plus":
-            self.bm25 = BM25Plus(tokenized_schemas)
-        elif variant == "l":
-            self.bm25 = BM25L(tokenized_schemas)
-        else:
-            self.bm25 = BM25Okapi(tokenized_schemas)
+        tokenized_schemas = [schemas[db_id].lower().split() for db_id in self.db_ids]
+        self.bm25 = self.VARIANTS[variant](tokenized_schemas)
 
     def score(self, query: str) -> dict:
         # apply same preprocessing to query as was applied to schemas
@@ -63,10 +62,10 @@ if __name__ == "__main__":
     schemas = load_schemas("data/spider/database", preprocessor=preprocessor)
     queries = load_queries("data/spider/dev.json")
 
-    selector = LexicalSelector(schemas, preprocessor=preprocessor)
+    selector = LexicalSelector(schemas, preprocessor=preprocessor, variant="okapi")
 
     # Sanity check on first 5 queries
-    print("=== BM25 Lexical Selector — Sanity Check ===\n")
+    print(f"=== BM25 Variant {selector.bm25.__class__.__name__} Lexical Selector with preprocessor values {preprocessor.remove_generic, preprocessor.lemmatize} — Sanity Check ===\n")
     for q in queries[:5]:
         question = q["question"]
         correct_db = q["db_id"]

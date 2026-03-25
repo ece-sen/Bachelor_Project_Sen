@@ -1,5 +1,5 @@
 """
-Reads all result JSON files from results/ and prints
+Reads all result JSON files from results/feature_results and prints
 a unified comparison table sorted by Top-1 accuracy.
 
 No selectors are re-initialized — reads from saved JSON files.
@@ -49,9 +49,9 @@ def load_result(filepath: str) -> dict:
     }
 
 
-def print_summary_table(results_dir: str = "results"):
+def print_summary_table(results_dir: str = "results/feature_results"):
     """
-    Loads all JSON files in results/ and prints
+    Loads all JSON files in results/feature_results and prints
     a unified table sorted by Top-1 accuracy.
     """
     json_files = [
@@ -116,4 +116,4 @@ def print_summary_table(results_dir: str = "results"):
 
 
 if __name__ == "__main__":
-    print_summary_table("results")
+    print_summary_table("results/feature_results")
