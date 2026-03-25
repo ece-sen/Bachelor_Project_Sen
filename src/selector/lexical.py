@@ -1,4 +1,4 @@
-from rank_bm25 import BM25Okapi
+from rank_bm25 import BM25Okapi, BM25Plus, BM25L
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -18,7 +18,7 @@ class LexicalSelector:
     - Document length normalization: longer schemas aren't unfairly favored
     """
 
-    def __init__(self, schemas: dict, preprocessor: Preprocessor = None):
+    def __init__(self, schemas: dict, preprocessor: Preprocessor = None, variant: str = "okapi"):
         """
         Builds the BM25 index at initialization time.
         This happens once — then it can be queried as many times as want.
@@ -34,8 +34,13 @@ class LexicalSelector:
             # schemas are already preprocessed by load_schemas
             # so here we just tokenize
             tokenized_schemas.append(text.lower().split())
-
-        self.bm25 = BM25Okapi(tokenized_schemas)
+            
+        if variant == "plus":
+            self.bm25 = BM25Plus(tokenized_schemas)
+        elif variant == "l":
+            self.bm25 = BM25L(tokenized_schemas)
+        else:
+            self.bm25 = BM25Okapi(tokenized_schemas)
 
     def score(self, query: str) -> dict:
         # apply same preprocessing to query as was applied to schemas
@@ -75,7 +80,8 @@ if __name__ == "__main__":
 
     # Full evaluation
     print("=== Full Dev Set Evaluation ===\n")
-    top1, top3 = evaluate(selector, queries)
+    r = evaluate(selector, queries)
     print(f"Total queries : {len(queries)}")
-    print(f"Top-1 Accuracy: {top1:.3f}")
-    print(f"Top-3 Accuracy: {top3:.3f}")
+    print(f"Top-1 Accuracy: {r['top1']:.3f}")
+    print(f"Top-3 Accuracy: {r['top3']:.3f}")
+    print(f"MRR           : {r['mrr']:.3f}")

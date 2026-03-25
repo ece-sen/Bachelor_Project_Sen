@@ -20,6 +20,7 @@ from src.selector.schema_repr import (
 )
 from src.selector.lexical import LexicalSelector
 from src.selector.statistical import TFIDFSelector
+from src.selector.semantical import SemanticSelector
 
 
 def get_overlap(query_text: str, schema_text: str) -> list:
@@ -168,6 +169,24 @@ if __name__ == "__main__":
         schemas, queries, preprocessor=p
     )
 
+     # ── BM25Plus — best preprocessing ──────────────────────────
+    p = Preprocessor(remove_generic=True, lemmatize=True)
+    schemas = load_schemas("data/spider/database", preprocessor=p)
+    export_method(
+        "BM25Plus_stop_lemma",
+        LexicalSelector(schemas, preprocessor=p, variant="plus"),
+        schemas, queries, preprocessor=p
+    )
+
+    # ── BM25L — best preprocessing ─────────────────────────────
+    p = Preprocessor(remove_generic=True, lemmatize=True)
+    schemas = load_schemas("data/spider/database", preprocessor=p)
+    export_method(
+        "BM25L_stop_lemma",
+        LexicalSelector(schemas, preprocessor=p, variant="l"),
+        schemas, queries, preprocessor=p
+    )
+
     # ── TF-IDF baseline ────────────────────────────────────────
     p = Preprocessor()
     schemas = load_schemas("data/spider/database", preprocessor=p)
@@ -213,9 +232,6 @@ if __name__ == "__main__":
         schemas, queries, preprocessor=p
     )
 
-    # add this import at the top of the file
-    from src.selector.semantical import SemanticSelector
-
     # ── SBERT MiniLM — no preprocessing, raw schemas ───────────
     # SBERT works on natural text, never preprocessed
     raw_schemas = load_schemas("data/spider/database")
@@ -244,6 +260,38 @@ if __name__ == "__main__":
     export_method(
         "BGE_base",
         SemanticSelector(raw_schemas, model_name="BAAI/bge-base-en-v1.5"),
+        raw_schemas, queries, preprocessor=None
+    )
+
+    # ── GTE small ───────────────────────────────────────────────
+    export_method(
+        "GTE_small",
+        SemanticSelector(raw_schemas,
+                         model_name="thenlper/gte-small"),
+        raw_schemas, queries, preprocessor=None
+    )
+
+    # ── E5 base ─────────────────────────────────────────────────
+    export_method(
+        "E5_base",
+        SemanticSelector(raw_schemas,
+                         model_name="intfloat/e5-base-v2"),
+        raw_schemas, queries, preprocessor=None
+    )
+
+    # ── E5 small ─────────────────────────────────────────────────
+    export_method(
+        "E5_small",
+        SemanticSelector(raw_schemas,
+                         model_name="intfloat/e5-small-v2"),
+        raw_schemas, queries, preprocessor=None
+    )
+
+    # ── Nomic embed v1 ──────────────────────────────────────────
+    export_method(
+        "Nomic_embed_v1",
+        SemanticSelector(raw_schemas,
+                         model_name="nomic-ai/nomic-embed-text-v1"),
         raw_schemas, queries, preprocessor=None
     )
 
