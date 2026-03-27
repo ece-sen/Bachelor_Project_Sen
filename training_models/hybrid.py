@@ -24,16 +24,11 @@ from src.selector.lexical import LexicalSelector
 from src.selector.statistical import TFIDFSelector
 from src.selector.semantical import SemanticSelector
 from src.evaluation.metrics import evaluate
-
+import json
+from pathlib import Path
 
 def _minmax_normalize(scores: dict) -> dict:
-    """
-    Normalizes a {db_id: float} score dict to [0, 1].
-
-    If all scores are identical (including all-zero BM25 results
-    for queries with no token overlap), every db gets 0.0 so they
-    don't artificially dominate the fusion.
-    """
+  
     values = list(scores.values())
     lo, hi = min(values), max(values)
     if hi == lo:
@@ -42,21 +37,6 @@ def _minmax_normalize(scores: dict) -> dict:
 
 
 class HybridSelector:
-    """
-    Weighted linear fusion of BM25, TF-IDF, and a semantic selector.
-
-    Parameters
-    ----------
-    bm25_selector     : LexicalSelector or None
-    tfidf_selector    : TFIDFSelector or None
-    semantic_selector : SemanticSelector or None
-    weights           : (alpha, beta, gamma) — must sum to 1.0
-                        order matches (bm25, tfidf, semantic)
-
-    At least two selectors must be provided.
-    If one is None its weight is dropped and the remaining two
-    are re-normalized to sum to 1.
-    """
 
     def __init__(
         self,
@@ -80,10 +60,7 @@ class HybridSelector:
         self._selectors = [(s, w / total_weight) for s, w in active]
 
     def score(self, query: str) -> dict:
-        """
-        Returns fused, normalized score for every db_id.
-        { db_id -> float in [0, 1] }
-        """
+        
         fused = None
 
         for selector, weight in self._selectors:
@@ -111,13 +88,7 @@ def grid_search(
     queries: list,
     step: float = 0.1,
 ) -> tuple:
-    """
-    Exhaustive grid search over (alpha, beta, gamma) weight triples
-    that sum to 1.0, in increments of `step`.
-
-    Returns the weight triple that maximises Top-1 accuracy.
-    Prints the top-10 combinations so you can see the landscape.
-    """
+   
     import numpy as np
 
     best_top1   = -1.0
@@ -168,7 +139,7 @@ def grid_search(
 if __name__ == "__main__":
     queries = load_queries("data/spider/dev.json")
 
-    # Best preprocessing from RQ1 for lexical/statistical selectors
+    # Best preprocessing from for lexical/statistical selectors
     p = Preprocessor(remove_generic=True, lemmatize=True)
     schemas_preprocessed = load_schemas("data/spider/database", preprocessor=p)
 
@@ -180,7 +151,7 @@ if __name__ == "__main__":
     tfidf  = TFIDFSelector(schemas_preprocessed, preprocessor=p, ngram_range=(1, 2))
     sbert  = SemanticSelector(raw_schemas, model_name="thenlper/gte-small")
 
-    # ── Sanity check: individual baselines ────────────────────────────────
+    # individual baselines for reference
     print("\n=== Individual selector baselines ===")
     print(f"{'Selector':<20} {'Top-1':>8} {'Top-3':>8} {'MRR':>8}")
     print("-" * 46)
@@ -188,23 +159,23 @@ if __name__ == "__main__":
         r = evaluate(sel, queries)
         print(f"{label:<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
 
-    # ── Fixed-weight hybrid first (theory-driven) ─────────────────────────
+    # Fixed-weight hybrid first
     print("\n=== Fixed-weight hybrid (0.1 / 0.2 / 0.7) ===")
     hybrid = HybridSelector(bm25, tfidf, sbert, weights=(0.1, 0.2, 0.7))
     r = evaluate(hybrid, queries)
     print(f"{'Hybrid':<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
 
-    # ── Grid search for optimal weights ───────────────────────────────────
+    # Grid search for optimal weights
     print("\n=== Grid search (step=0.1) — top 10 weight combos ===")
     best = grid_search(bm25, tfidf, sbert, queries, step=0.1)
 
-    # ── Evaluate best found weights ────────────────────────────────────────
+    # Evaluate best found weights
     print(f"\n=== Best hybrid (α={best[0]}, β={best[1]}, γ={best[2]}) ===")
     best_hybrid = HybridSelector(bm25, tfidf, sbert, weights=best)
     r = evaluate(best_hybrid, queries)
     print(f"{'Best Hybrid':<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
 
-    # ── Two-selector ablations (to show contribution of each component) ───
+    # Two-selector ablations
     print("\n=== Two-selector ablations ===")
     print(f"{'Combination':<30} {'Top-1':>8} {'Top-3':>8} {'MRR':>8}")
     print("-" * 54)
@@ -218,3 +189,8 @@ if __name__ == "__main__":
         h = HybridSelector(b, t, s, weights=w)
         r = evaluate(h, queries)
         print(f"{label:<30} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
+
+    # Save best weights to disk for final evaluation on test set 
+    Path("models").mkdir(exist_ok=True)
+    json.dump({"weights": list(best)}, open("models/best_hybrid_weights.json", "w"))
+    print(f"\nBest weights saved to models/best_hybrid_weights.json")

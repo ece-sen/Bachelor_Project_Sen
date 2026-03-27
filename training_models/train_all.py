@@ -1,25 +1,3 @@
-"""
-train_all.py — Train all models and save checkpoints.
-
-Trains three model families on Spider train_spider.json:
-
-    1. GTE-small base          — no training, just encode (baseline)
-    2. GTE-small fine-tuned    — CosineSimilarityLoss on (query, schema) pairs
-    3. GTE-small + hard negs   — same loss but negatives chosen by BM25/TF-IDF
-                                  (the schemas that score highest but are wrong)
-    4. MLP fusion              — 3-feature MLP on [bm25, tfidf, semantic] scores
-
-Checkpoints saved to:
-    models/gte-small-finetuned/     ← sentence-transformers format
-    models/gte-small-hardneg/       ← sentence-transformers format
-    models/mlp_fusion.pt            ← torch state dict
-
-Run:
-    python train_all.py
-
-After this, run evaluate_all.py to test on the held-out test set.
-"""
-
 import os
 import sys
 import random
@@ -39,12 +17,12 @@ from src.selector.semantical  import SemanticSelector
 from mlp_fusion               import FusionMLP, FusionDataset, train_mlp
 from hybrid                   import _minmax_normalize
 
-# ── Reproducibility ────────────────────────────────────────────────────────────
+# Reproducibility
 SEED = 42
 random.seed(SEED)
 torch.manual_seed(SEED)
 
-# ── Paths ──────────────────────────────────────────────────────────────────────
+
 TRAIN_PATH   = "data/spider/train_spider.json"
 DEV_PATH     = "data/spider/dev.json"
 DATABASE_DIR = "data/spider/database"
@@ -55,7 +33,7 @@ CKPT_MLP       = "models/mlp_fusion.pt"
 
 BASE_MODEL     = "thenlper/gte-small"
 
-# ── Hyperparameters ────────────────────────────────────────────────────────────
+# Hyperparameters
 EPOCHS_SBERT   = 3
 BATCH_SIZE     = 16
 WARMUP_RATIO   = 0.1
@@ -64,9 +42,8 @@ NEG_HARD       = 3     # hard negatives per query for hard-neg fine-tune
 NEG_MLP        = 5     # negatives per query for MLP dataset
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # Shared helpers
-# ══════════════════════════════════════════════════════════════════════════════
 
 def _warmup_steps(dataloader, epochs, ratio=WARMUP_RATIO):
     return int(len(dataloader) * epochs * ratio)
@@ -91,9 +68,7 @@ def _dev_evaluator(dev_qs, schemas):
                                                    name="dev-similarity")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # Model 2 — GTE-small fine-tuned with random negatives
-# ══════════════════════════════════════════════════════════════════════════════
 
 def build_random_neg_examples(train_qs, schemas, neg_per_query):
     """
@@ -147,19 +122,10 @@ def train_finetuned(train_qs, dev_qs, schemas, output_dir):
     print(f"  Saved to {output_dir}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # Model 3 — GTE-small fine-tuned with hard negatives
-# ══════════════════════════════════════════════════════════════════════════════
 
 def mine_hard_negatives(train_qs, schemas, bm25, tfidf, neg_per_query):
-    """
-    For each query, scores every DB with BM25 and TF-IDF, takes the
-    top-scoring wrong databases as hard negatives.
-
-    Hard negatives are the schemas the lexical models are most
-    confused by — teaching the semantic model to separate these
-    is exactly where fine-tuning adds the most value.
-    """
+    
     all_dbs  = list(schemas.keys())
     examples = []
 
@@ -223,9 +189,7 @@ def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
     print(f"  Saved to {output_dir}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 # Main
-# ══════════════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
 
@@ -241,32 +205,32 @@ if __name__ == "__main__":
     print(f"  Dev queries   : {len(dev_qs)}")
     print(f"  Schemas       : {len(raw_schemas)}")
 
-    # ── Base selectors (needed by models 3 and 4) ─────────────────────────
+    # Base selectors (needed by models 3 and 4) 
     print("\nInitializing base selectors (BM25, TF-IDF, GTE-small)...")
     bm25     = LexicalSelector(schemas_preprocessed, preprocessor=p, variant="okapi")
     tfidf    = TFIDFSelector(schemas_preprocessed, preprocessor=p,
                              ngram_range=(1, 2))
     semantic = SemanticSelector(raw_schemas, model_name=BASE_MODEL)
 
-    # ── Model 1: GTE-small base — nothing to train ─────────────────────────
+    # Model 1: GTE-small base — nothing to train 
     print("\n" + "=" * 60)
     print("Model 1 — GTE-small base (no training, used as baseline)")
     print("=" * 60)
     print("  Nothing to train — loaded at eval time from HuggingFace.")
 
-    # ── Model 2: GTE-small fine-tuned (random negatives) ──────────────────
+    # Model 2: GTE-small fine-tuned (random negatives)
     train_finetuned(train_qs, dev_qs, raw_schemas, CKPT_FINETUNED)
 
-    # ── Model 3: GTE-small fine-tuned (hard negatives) ────────────────────
+    # Model 3: GTE-small fine-tuned (hard negatives)
     train_hardneg(train_qs, dev_qs, raw_schemas, bm25, tfidf, CKPT_HARDNEG)
 
-    # ── Model 4: MLP fusion ────────────────────────────────────────────────
+    # Model 4: MLP fusion
     print("\n" + "=" * 60)
     print("Model 4 — MLP fusion (BM25 + TF-IDF + GTE-small)")
     print("=" * 60)
     train_mlp(bm25, tfidf, semantic, raw_schemas, train_qs,
-              model_path=CKPT_MLP)
+              model_path=CKPT_MLP, neg_per_query=NEG_MLP)
 
     print("\n" + "=" * 60)
-    print("All models trained. Run evaluate_all.py to test on test set.")
+    print("All models trained. Run evaluation script to test on test set.")
     print("=" * 60)

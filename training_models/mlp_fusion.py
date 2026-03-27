@@ -1,33 +1,3 @@
-"""
-RQ2 — Learned Score Fusion via MLP
-
-Architecture
-------------
-For every (query, db_id) pair the three selectors each produce one
-scalar score.  Those three numbers are stacked into a feature vector
-and passed through a small MLP that outputs a single relevance score:
-
-    [bm25_norm, tfidf_norm, semantic_norm]  →  MLP  →  relevance ∈ (0, 1)
-
-The MLP is trained with BCELoss (binary cross-entropy):
-    label = 1.0  if db_id == correct_db   (positive)
-    label = 0.0  otherwise                (negative)
-
-At inference the MLP score replaces the manual weights from hybrid.py,
-so this is a direct learned alternative to the grid-searched hybrid.
-
-Why this design?
-- Three input features only → tiny model, no overfitting risk
-- Scores are already normalized → stable gradients, no need for BatchNorm
-- BCELoss + sigmoid output → directly interpretable as P(correct DB)
-- Trained on Spider train set, evaluated on dev set → clean split
-
-File layout
------------
-    mlp_fusion.py           ← this file (model + training + selector)
-    models/mlp_fusion.pt    ← saved MLP weights after training
-"""
-
 import os
 import sys
 import random
@@ -45,44 +15,29 @@ from src.selector.lexical     import LexicalSelector
 from src.selector.statistical import TFIDFSelector
 from src.selector.semantical  import SemanticSelector
 from src.evaluation.metrics   import evaluate
-from hybrid import _minmax_normalize   # reuse, never duplicate
+from hybrid import _minmax_normalize  
 
 
-# ── Reproducibility ────────────────────────────────────────────────────────────
+# Reproducibility
 SEED = 42
 random.seed(SEED)
 torch.manual_seed(SEED)
 
 
-# ── Config ─────────────────────────────────────────────────────────────────────
+# Config 
 MODEL_PATH   = "models/mlp_fusion.pt"
 TRAIN_PATH   = "data/spider/train_spider.json"
 DEV_PATH     = "data/spider/dev.json"
 DATABASE_DIR = "data/spider/database"
 
-NEG_PER_QUERY = 5      # negatives sampled per query during training
-                        # more than finetune.py because MLP is fast to train
+NEG_PER_QUERY = 5      
 EPOCHS        = 20
 BATCH_SIZE    = 64
 LR            = 1e-3
 
 
-# ── MLP definition ─────────────────────────────────────────────────────────────
-
+# MLP definition 
 class FusionMLP(nn.Module):
-    """
-    3 → 32 → 16 → 1  feed-forward network with ReLU activations.
-
-    Input  : [bm25_norm, tfidf_norm, semantic_norm]  (all in [0, 1])
-    Output : relevance score passed through sigmoid → scalar ∈ (0, 1)
-
-    Architecture kept deliberately small:
-    - Only 3 input features → deep network would overfit immediately
-    - Hidden layers add non-linearity so the MLP can learn e.g.
-      "high semantic AND low BM25 is still a strong signal"
-      which a linear weighted sum (hybrid.py) cannot express
-    - Dropout(0.3) on the first hidden layer regularises training
-    """
 
     def __init__(self):
         super().__init__()
@@ -100,19 +55,9 @@ class FusionMLP(nn.Module):
         return self.net(x).squeeze(-1)
 
 
-# ── Dataset ────────────────────────────────────────────────────────────────────
+# Dataset
 
 class FusionDataset(Dataset):
-    """
-    Pre-computes all three normalized scores for every
-    (query, db_id) training pair and stores them as tensors.
-
-    Pre-computing is much faster than scoring on-the-fly inside
-    the training loop because the BM25/TF-IDF/semantic selectors
-    are called once per query, not once per batch.
-
-    Each item: (feature_tensor [3], label_tensor [1])
-    """
 
     def __init__(
         self,
@@ -175,7 +120,7 @@ class FusionDataset(Dataset):
                                                 dtype=torch.float32)
 
 
-# ── Training loop ──────────────────────────────────────────────────────────────
+# Training loop 
 
 def train_mlp(
     bm25:     LexicalSelector,
@@ -187,9 +132,10 @@ def train_mlp(
     batch_size:  int   = BATCH_SIZE,
     lr:          float = LR,
     model_path:  str   = MODEL_PATH,
+    neg_per_query: int = NEG_PER_QUERY, 
 ) -> FusionMLP:
 
-    dataset    = FusionDataset(queries, schemas, bm25, tfidf, semantic)
+    dataset    = FusionDataset(queries, schemas, bm25, tfidf, semantic, neg_per_query=neg_per_query)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     model     = FusionMLP()
@@ -222,20 +168,9 @@ def train_mlp(
     return model
 
 
-# ── Inference selector ─────────────────────────────────────────────────────────
+# Inference selector 
 
 class MLPFusionSelector:
-    """
-    Drop-in selector that uses the trained MLP to score every database.
-
-    Implements the same .score() / .rank() interface as all other
-    selectors so it works directly with evaluate() from metrics.py
-    and can be slotted into hybrid.py if needed.
-
-    Usage:
-        selector = MLPFusionSelector(bm25, tfidf, semantic, model_path)
-        selector.rank("How many singers are there?", top_k=3)
-    """
 
     def __init__(
         self,
@@ -247,7 +182,7 @@ class MLPFusionSelector:
         self.bm25     = bm25
         self.tfidf    = tfidf
         self.semantic = semantic
-        self.db_ids   = list(bm25.db_ids)   # all three share the same db_ids
+        self.db_ids   = list(bm25.db_ids)  
 
         self.mlp = FusionMLP()
         self.mlp.load_state_dict(torch.load(model_path, weights_only=True))
@@ -276,11 +211,11 @@ class MLPFusionSelector:
         return ranked[:top_k]
 
 
-# ── Main ───────────────────────────────────────────────────────────────────────
+# Main
 
 if __name__ == "__main__":
 
-    # ── Load data ──────────────────────────────────────────────────────────
+    # Load data
     print("Loading schemas and queries...")
     p                    = Preprocessor(remove_generic=True, lemmatize=True)
     schemas_preprocessed = load_schemas(DATABASE_DIR, preprocessor=p)
@@ -288,17 +223,17 @@ if __name__ == "__main__":
     train_qs             = load_queries(TRAIN_PATH)
     dev_qs               = load_queries(DEV_PATH)
 
-    # ── Build base selectors ───────────────────────────────────────────────
+    # Build base selectors
     print("Initializing base selectors...")
     bm25     = LexicalSelector(schemas_preprocessed, preprocessor=p, variant="okapi")
     tfidf    = TFIDFSelector(schemas_preprocessed, preprocessor=p,
                              ngram_range=(1, 2))
     semantic = SemanticSelector(raw_schemas, model_name="thenlper/gte-small")
 
-    # ── Train MLP ──────────────────────────────────────────────────────────
+    # Train MLP
     train_mlp(bm25, tfidf, semantic, raw_schemas, train_qs)
 
-    # ── Evaluate on dev ────────────────────────────────────────────────────
+    # Evaluate on dev 
     print("\nEvaluating MLP fusion on dev set...")
     selector = MLPFusionSelector(bm25, tfidf, semantic, MODEL_PATH)
     r        = evaluate(selector, dev_qs)
