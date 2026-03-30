@@ -69,13 +69,7 @@ class TFIDFSelector:
     def score(self, query: str) -> dict:
         if self.preprocessor:
             query = self.preprocessor.process(query)
-        """
-        Returns cosine similarity score between the query and every schema.
-        { db_id -> float score }
-
-        The query is transformed using the same vocabulary and IDF weights
-        that were learned from the schemas during __init__.
-        """
+    
         # Transform query into the same TF-IDF vector space
         query_vector = self.vectorizer.transform([query])
 
@@ -124,4 +118,5 @@ if __name__ == "__main__":
     print(f"Total queries : {len(queries)}")
     print(f"Top-1 Accuracy: {r['top1']:.3f}")
     print(f"Top-3 Accuracy: {r['top3']:.3f}")
-    print(f"MRR           : {r['mrr']:.3f}")
+    print(f"MRR@3           : {r['mrr@3']:.3f}")
+    print(f"MRR@10          : {r['mrr@10']:.3f}")

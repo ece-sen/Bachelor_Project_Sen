@@ -34,7 +34,7 @@ CKPT_MLP       = "models/mlp_fusion.pt"
 BASE_MODEL     = "thenlper/gte-small"
 
 # Hyperparameters
-EPOCHS_SBERT   = 3
+EPOCHS_SBERT   = 1
 BATCH_SIZE     = 16
 WARMUP_RATIO   = 0.1
 NEG_RANDOM     = 3     # random negatives per query for standard fine-tune
@@ -102,7 +102,7 @@ def train_finetuned(train_qs, dev_qs, schemas, output_dir):
     examples   = build_random_neg_examples(train_qs, schemas, NEG_RANDOM)
     dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
     model      = SentenceTransformer(BASE_MODEL)
-    loss       = losses.CosineSimilarityLoss(model)
+    loss       = losses.MultipleNegativesRankingLoss(model)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
     print(f"  Examples   : {len(examples)}")
@@ -169,7 +169,7 @@ def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
     examples   = mine_hard_negatives(train_qs, schemas, bm25, tfidf, NEG_HARD)
     dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
     model      = SentenceTransformer(BASE_MODEL)
-    loss       = losses.CosineSimilarityLoss(model)
+    loss       = losses.MultipleNegativesRankingLoss(model)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
     print(f"  Examples   : {len(examples)}")
@@ -212,11 +212,11 @@ if __name__ == "__main__":
                              ngram_range=(1, 2))
     semantic = SemanticSelector(raw_schemas, model_name=BASE_MODEL)
 
-    # Model 1: GTE-small base — nothing to train 
-    print("\n" + "=" * 60)
-    print("Model 1 — GTE-small base (no training, used as baseline)")
-    print("=" * 60)
-    print("  Nothing to train — loaded at eval time from HuggingFace.")
+    # # Model 1: GTE-small base — nothing to train 
+    # print("\n" + "=" * 60)
+    # print("Model 1 — GTE-small base (no training, used as baseline)")
+    # print("=" * 60)
+    # print("  Nothing to train — loaded at eval time from HuggingFace.")
 
     # Model 2: GTE-small fine-tuned (random negatives)
     train_finetuned(train_qs, dev_qs, raw_schemas, CKPT_FINETUNED)
@@ -224,12 +224,12 @@ if __name__ == "__main__":
     # Model 3: GTE-small fine-tuned (hard negatives)
     train_hardneg(train_qs, dev_qs, raw_schemas, bm25, tfidf, CKPT_HARDNEG)
 
-    # Model 4: MLP fusion
-    print("\n" + "=" * 60)
-    print("Model 4 — MLP fusion (BM25 + TF-IDF + GTE-small)")
-    print("=" * 60)
-    train_mlp(bm25, tfidf, semantic, raw_schemas, train_qs,
-              model_path=CKPT_MLP, neg_per_query=NEG_MLP)
+    # # Model 4: MLP fusion
+    # print("\n" + "=" * 60)
+    # print("Model 4 — MLP fusion (BM25 + TF-IDF + GTE-small)")
+    # print("=" * 60)
+    # train_mlp(bm25, tfidf, semantic, raw_schemas, train_qs,
+    #           model_path=CKPT_MLP, neg_per_query=NEG_MLP)
 
     print("\n" + "=" * 60)
     print("All models trained. Run evaluation script to test on test set.")

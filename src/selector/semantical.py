@@ -108,7 +108,7 @@ if __name__ == "__main__":
     ]
 
     print(f"\n=== Extended Semantic Model Comparison ===")
-    print(f"{'Model':<60} {'Top-1':>7} {'Top-3':>7} {'MRR':>7}")
+    print(f"{'Model':<60} {'Top-1':>7} {'Top-3':>7} {'MRR@3':>7} {'MRR@10':>7}")
     print(f"{'-'*82}")
 
     results = []
@@ -119,7 +119,7 @@ if __name__ == "__main__":
             r        = evaluate(selector, queries)
             results.append((model_name, r))
             print(f"{model_name:<60} {r['top1']:>7.3f} "
-                  f"{r['top3']:>7.3f} {r['mrr']:>7.3f}")
+                  f"{r['top3']:>7.3f} {r['mrr@3']:>7.3f} {r['mrr@10']:>7.3f}")
         except Exception as e:
             print(f"  FAILED: {e}")
             continue
@@ -129,8 +129,8 @@ if __name__ == "__main__":
     print(f"\n{'='*82}")
     print("Ranked by Top-1:")
     print(f"{'='*82}")
-    print(f"{'Model':<60} {'Top-1':>7} {'Top-3':>7} {'MRR':>7}")
+    print(f"{'Model':<60} {'Top-1':>7} {'Top-3':>7} {'MRR@3':>7} {'MRR@10':>7}")
     print(f"{'-'*82}")
     for model_name, r in results:
         print(f"{model_name:<60} {r['top1']:>7.3f} "
-              f"{r['top3']:>7.3f} {r['mrr']:>7.3f}")
+              f"{r['top3']:>7.3f} {r['mrr@3']:>7.3f} {r['mrr@10']:>7.3f}")

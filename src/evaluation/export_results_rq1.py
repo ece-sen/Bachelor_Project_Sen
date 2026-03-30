@@ -21,6 +21,7 @@ from src.selector.schema_repr import (
 from src.selector.lexical import LexicalSelector
 from src.selector.statistical import TFIDFSelector
 from src.selector.semantical import SemanticSelector
+from src.evaluation.metrics import compute_mrr, evaluate
 
 
 def get_overlap(query_text: str, schema_text: str) -> list:
@@ -49,26 +50,12 @@ def export_method(
     queries:      list,
     preprocessor: Preprocessor = None
 ):
-    """
-    Runs the selector on all queries and exports results to JSON.
-
-    method_name:  used as filename and label inside the JSON
-    selector:     any selector with a .rank() method
-    schemas:      the schema dict used by this method
-                  (already preprocessed if applicable)
-    queries:      list of query dicts from dev.json
-    preprocessor: if provided, applied to query before overlap
-                  calculation so query_used matches what the
-                  selector actually sees
-    """
+   
     os.makedirs("results/feature_results", exist_ok=True)
 
     output = {
         "method": method_name,
         "total_queries": len(queries),
-        # all schema texts used by this method
-        # stored once at the top so you can inspect what each
-        # method's schema representation looks like
         "schemas": {
             db_id: schemas[db_id]
             for db_id in sorted(schemas.keys())
@@ -77,6 +64,9 @@ def export_method(
     }
 
     top1_correct = 0
+    top3_correct = 0
+    mrr3_sum = 0.0
+    mrr10_sum = 0.0
 
     for q in queries:
         original_question = q["question"]
@@ -89,12 +79,18 @@ def export_method(
             query_used = original_question
 
         # get top 3 predictions from selector
-        ranked   = selector.rank(original_question, top_k=3)
-        top1_db  = ranked[0][0]
-        top3_dbs = [db for db, _ in ranked]
+        ranked_3   = selector.rank(original_question, top_k=3)
+        top1_db  = ranked_3[0][0]
         top3_with_scores = [
             {"db_id": db, "score": round(score, 4)}
-            for db, score in ranked
+            for db, score in ranked_3
+        ]
+
+        # get MRR@10 scores for this query
+        ranked_10  = selector.rank(original_question, top_k=10)
+        top10_with_scores = [
+            {"db_id": db, "score": round(score, 4)}
+            for db, score in ranked_10
         ]
 
         # compute word overlap between processed query and correct schema
@@ -103,6 +99,11 @@ def export_method(
         is_correct = top1_db == correct_db
         if is_correct:
             top1_correct += 1
+        if correct_db in [t["db_id"] for t in top3_with_scores]: 
+            top3_correct += 1
+
+        mrr3_sum  += compute_mrr([t["db_id"] for t in top3_with_scores],  correct_db)
+        mrr10_sum += compute_mrr([t["db_id"] for t in top10_with_scores], correct_db)
 
         output["queries"].append({
             "original_question": original_question,
@@ -112,12 +113,17 @@ def export_method(
             "overlap_with_correct_schema": overlap,
             "top1_db":           top1_db,
             "top3":              top3_with_scores,
+            "top10":             top10_with_scores,
             "top1_correct":      is_correct
         })
 
     # summary stats at the top level for quick reference
     output["top1_accuracy"] = round(top1_correct / len(queries), 4)
     output["top1_correct_count"] = top1_correct
+    output["top3_accuracy"] = round(top3_correct / len(queries), 4)
+    output["top3_correct_count"] = top3_correct
+    output["mrr@3"] = round(mrr3_sum / len(queries), 4)
+    output["mrr@10"] = round(mrr10_sum / len(queries), 4)
 
     filepath = f"results/feature_results/{method_name.replace(' ', '_')}.json"
     with open(filepath, "w", encoding="utf-8") as f:
@@ -125,6 +131,8 @@ def export_method(
 
     print(f"  Exported {filepath}  "
           f"(Top-1: {output['top1_accuracy']:.3f}  "
+          f"MRR@3: {output['mrr@3']:.3f}  "
+          f"MRR@10: {output['mrr@10']:.3f}  "
           f"{top1_correct}/{len(queries)} correct)")
 
 
@@ -138,7 +146,7 @@ if __name__ == "__main__":
     schemas = load_schemas("data/spider/database", preprocessor=p)
     export_method(
         "BM25_baseline",
-        LexicalSelector(schemas, preprocessor=p),
+        LexicalSelector(schemas, preprocessor=p, variant="okapi"),
         schemas, queries, preprocessor=p
     )
 
@@ -147,7 +155,7 @@ if __name__ == "__main__":
     schemas = load_schemas("data/spider/database", preprocessor=p)
     export_method(
         "BM25_stopwords",
-        LexicalSelector(schemas, preprocessor=p),
+        LexicalSelector(schemas, preprocessor=p, variant="okapi"),
         schemas, queries, preprocessor=p
     )
 
@@ -156,7 +164,7 @@ if __name__ == "__main__":
     schemas = load_schemas("data/spider/database", preprocessor=p)
     export_method(
         "BM25_lemmatization",
-        LexicalSelector(schemas, preprocessor=p),
+        LexicalSelector(schemas, preprocessor=p, variant="okapi"),
         schemas, queries, preprocessor=p
     )
 
@@ -165,7 +173,7 @@ if __name__ == "__main__":
     schemas = load_schemas("data/spider/database", preprocessor=p)
     export_method(
         "BM25_stop_lemma",
-        LexicalSelector(schemas, preprocessor=p),
+        LexicalSelector(schemas, preprocessor=p, variant="okapi"),
         schemas, queries, preprocessor=p
     )
 

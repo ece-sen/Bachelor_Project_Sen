@@ -237,4 +237,4 @@ if __name__ == "__main__":
     print("\nEvaluating MLP fusion on dev set...")
     selector = MLPFusionSelector(bm25, tfidf, semantic, MODEL_PATH)
     r        = evaluate(selector, dev_qs)
-    print(f"Top-1: {r['top1']:.3f}  Top-3: {r['top3']:.3f}  MRR: {r['mrr']:.3f}")
+    print(f"Top-1: {r['top1']:.3f}  Top-3: {r['top3']:.3f}  MRR@3: {r['mrr@3']:.3f}  MRR@10: {r['mrr@10']:.3f}")

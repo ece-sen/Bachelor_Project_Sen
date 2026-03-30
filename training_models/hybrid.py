@@ -17,6 +17,8 @@ run this as a two-selector hybrid.
 
 import sys
 import os
+import numpy as np
+
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from src.selector.schema_repr import load_schemas, load_queries, Preprocessor
@@ -89,8 +91,6 @@ def grid_search(
     step: float = 0.1,
 ) -> tuple:
    
-    import numpy as np
-
     best_top1   = -1.0
     best_weights = None
     all_results  = []
@@ -113,7 +113,7 @@ def grid_search(
             )
             r = evaluate(selector, queries)
 
-            all_results.append((alpha, beta, gamma, r["top1"], r["top3"], r["mrr"]))
+            all_results.append((alpha, beta, gamma, r["top1"], r["top3"], r["mrr@3"], r["mrr@10"]))
 
             if r["top1"] > best_top1:
                 best_top1    = r["top1"]
@@ -122,12 +122,12 @@ def grid_search(
     # sort and print top 10
     all_results.sort(key=lambda x: x[3], reverse=True)
     print(f"\n{'Alpha':>7} {'Beta':>7} {'Gamma':>7} "
-          f"{'Top-1':>8} {'Top-3':>8} {'MRR':>8}")
-    print("-" * 55)
+          f"{'Top-1':>8} {'Top-3':>8} {'MRR@3':>8} {'MRR@10':>8}")
+    print("-" * 82)
     for row in all_results[:10]:
-        a, b, g, t1, t3, mrr = row
+        a, b, g, t1, t3, mrr_3, mrr_10 = row
         print(f"{a:>7.2f} {b:>7.2f} {g:>7.2f} "
-              f"{t1:>8.3f} {t3:>8.3f} {mrr:>8.3f}")
+              f"{t1:>8.3f} {t3:>8.3f} {mrr_3:>8.3f} {mrr_10:>8.3f}")
 
     print(f"\nBest weights → alpha={best_weights[0]}, "
           f"beta={best_weights[1]}, gamma={best_weights[2]}  "
@@ -153,17 +153,17 @@ if __name__ == "__main__":
 
     # individual baselines for reference
     print("\n=== Individual selector baselines ===")
-    print(f"{'Selector':<20} {'Top-1':>8} {'Top-3':>8} {'MRR':>8}")
-    print("-" * 46)
+    print(f"{'Selector':<20} {'Top-1':>8} {'Top-3':>8} {'MRR@3':>8} {'MRR@10':>8}")
+    print("-" * 82)
     for label, sel in [("BM25", bm25), ("TF-IDF", tfidf), ("GTE-small", sbert)]:
         r = evaluate(sel, queries)
-        print(f"{label:<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
+        print(f"{label:<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr@3']:>8.3f} {r['mrr@10']:>8.3f}")
 
     # Fixed-weight hybrid first
     print("\n=== Fixed-weight hybrid (0.1 / 0.2 / 0.7) ===")
     hybrid = HybridSelector(bm25, tfidf, sbert, weights=(0.1, 0.2, 0.7))
     r = evaluate(hybrid, queries)
-    print(f"{'Hybrid':<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
+    print(f"{'Hybrid':<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr@3']:>8.3f} {r['mrr@10']:>8.3f}")
 
     # Grid search for optimal weights
     print("\n=== Grid search (step=0.1) — top 10 weight combos ===")
@@ -173,12 +173,12 @@ if __name__ == "__main__":
     print(f"\n=== Best hybrid (α={best[0]}, β={best[1]}, γ={best[2]}) ===")
     best_hybrid = HybridSelector(bm25, tfidf, sbert, weights=best)
     r = evaluate(best_hybrid, queries)
-    print(f"{'Best Hybrid':<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
+    print(f"{'Best Hybrid':<20} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr@3']:>8.3f} {r['mrr@10']:>8.3f}")
 
     # Two-selector ablations
     print("\n=== Two-selector ablations ===")
-    print(f"{'Combination':<30} {'Top-1':>8} {'Top-3':>8} {'MRR':>8}")
-    print("-" * 54)
+    print(f"{'Combination':<30} {'Top-1':>8} {'Top-3':>8} {'MRR@3':>8} {'MRR@10':>8}")
+    print("-" * 82)
 
     combos = [
         ("BM25 + TF-IDF",    bm25,  tfidf, None,  (0.4, 0.6, 0.0)),
@@ -188,9 +188,10 @@ if __name__ == "__main__":
     for label, b, t, s, w in combos:
         h = HybridSelector(b, t, s, weights=w)
         r = evaluate(h, queries)
-        print(f"{label:<30} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr']:>8.3f}")
+        print(f"{label:<30} {r['top1']:>8.3f} {r['top3']:>8.3f} {r['mrr@3']:>8.3f} {r['mrr@10']:>8.3f}")
 
     # Save best weights to disk for final evaluation on test set 
     Path("models").mkdir(exist_ok=True)
-    json.dump({"weights": list(best)}, open("models/best_hybrid_weights.json", "w"))
+    with open("models/best_hybrid_weights.json", "w") as f:
+        json.dump({"weights": list(best)}, f)
     print(f"\nBest weights saved to models/best_hybrid_weights.json")
