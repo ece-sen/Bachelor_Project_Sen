@@ -34,11 +34,10 @@ CKPT_MLP       = "models/mlp_fusion.pt"
 BASE_MODEL     = "thenlper/gte-small"
 
 # Hyperparameters
-EPOCHS_SBERT   = 1
-BATCH_SIZE     = 16
+EPOCHS_SBERT   = 3
+BATCH_SIZE     = 64
 WARMUP_RATIO   = 0.1
-NEG_RANDOM     = 3     # random negatives per query for standard fine-tune
-NEG_HARD       = 3     # hard negatives per query for hard-neg fine-tune
+NEG_HARD       = 7     # hard negatives per query for hard-neg fine-tune
 NEG_MLP        = 5     # negatives per query for MLP dataset
 
 
@@ -70,27 +69,19 @@ def _dev_evaluator(dev_qs, schemas):
 
 # Model 2 — GTE-small fine-tuned with random negatives
 
-def build_random_neg_examples(train_qs, schemas, neg_per_query):
+def build_random_neg_examples(train_qs, schemas):
     """
-    (query, correct_schema) label=1.0
-    (query, random_wrong_schema) × N label=0.0
+    One (query, correct_schema) pair per training query.
+    MNRL constructs in-batch negatives automatically.
     """
-    all_dbs  = list(schemas.keys())
     examples = []
-
     for q in train_qs:
         correct_db = q["db_id"]
         if correct_db not in schemas:
             continue
-
         examples.append(InputExample(
-            texts=[q["question"], schemas[correct_db]], label=1.0))
-
-        wrong = [d for d in all_dbs if d != correct_db]
-        for db in random.sample(wrong, min(neg_per_query, len(wrong))):
-            examples.append(InputExample(
-                texts=[q["question"], schemas[db]], label=0.0))
-
+            texts=[q["question"], schemas[correct_db]]
+        ))
     return examples
 
 
@@ -99,10 +90,10 @@ def train_finetuned(train_qs, dev_qs, schemas, output_dir):
     print("Model 2 — GTE-small fine-tuned (random negatives)")
     print("=" * 60)
 
-    examples   = build_random_neg_examples(train_qs, schemas, NEG_RANDOM)
+    examples   = build_random_neg_examples(train_qs, schemas)
     dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
     model      = SentenceTransformer(BASE_MODEL)
-    loss       = losses.MultipleNegativesRankingLoss(model)
+    loss       = losses.CachedMultipleNegativesRankingLoss(model, mini_batch_size=32)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
     print(f"  Examples   : {len(examples)}")
@@ -125,7 +116,6 @@ def train_finetuned(train_qs, dev_qs, schemas, output_dir):
 # Model 3 — GTE-small fine-tuned with hard negatives
 
 def mine_hard_negatives(train_qs, schemas, bm25, tfidf, neg_per_query):
-    
     all_dbs  = list(schemas.keys())
     examples = []
 
@@ -140,11 +130,6 @@ def mine_hard_negatives(train_qs, schemas, bm25, tfidf, neg_per_query):
         if correct_db not in schemas:
             continue
 
-        # positive
-        examples.append(InputExample(
-            texts=[question, schemas[correct_db]], label=1.0))
-
-        # fuse BM25 + TF-IDF scores, pick top wrong DBs as hard negatives
         bm25_scores  = _minmax_normalize(bm25.score(question))
         tfidf_scores = _minmax_normalize(tfidf.score(question))
         fused = {
@@ -154,12 +139,14 @@ def mine_hard_negatives(train_qs, schemas, bm25, tfidf, neg_per_query):
         hard_negs = sorted(fused.items(), key=lambda x: x[1], reverse=True)
         hard_negs = [db for db, _ in hard_negs[:neg_per_query]]
 
-        for db in hard_negs:
+        # triplet: (query, positive, hard_negative)
+        # one InputExample per hard negative
+        for hard_neg_db in hard_negs:
             examples.append(InputExample(
-                texts=[question, schemas[db]], label=0.0))
+                texts=[question, schemas[correct_db], schemas[hard_neg_db]]
+            ))
 
     return examples
-
 
 def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
     print("\n" + "=" * 60)
@@ -169,7 +156,7 @@ def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
     examples   = mine_hard_negatives(train_qs, schemas, bm25, tfidf, NEG_HARD)
     dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
     model      = SentenceTransformer(BASE_MODEL)
-    loss       = losses.MultipleNegativesRankingLoss(model)
+    loss       = losses.CachedMultipleNegativesRankingLoss(model, mini_batch_size=32)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
     print(f"  Examples   : {len(examples)}")
@@ -193,7 +180,6 @@ def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
 
 if __name__ == "__main__":
 
-    # ── Load everything once ───────────────────────────────────────────────
     print("Loading schemas and queries...")
     p                    = Preprocessor(remove_generic=True, lemmatize=True)
     schemas_preprocessed = load_schemas(DATABASE_DIR, preprocessor=p)
@@ -205,31 +191,28 @@ if __name__ == "__main__":
     print(f"  Dev queries   : {len(dev_qs)}")
     print(f"  Schemas       : {len(raw_schemas)}")
 
-    # Base selectors (needed by models 3 and 4) 
     print("\nInitializing base selectors (BM25, TF-IDF, GTE-small)...")
     bm25     = LexicalSelector(schemas_preprocessed, preprocessor=p, variant="okapi")
-    tfidf    = TFIDFSelector(schemas_preprocessed, preprocessor=p,
-                             ngram_range=(1, 2))
+    tfidf    = TFIDFSelector(schemas_preprocessed, preprocessor=p, ngram_range=(1, 2))
     semantic = SemanticSelector(raw_schemas, model_name=BASE_MODEL)
 
-    # # Model 1: GTE-small base — nothing to train 
-    # print("\n" + "=" * 60)
-    # print("Model 1 — GTE-small base (no training, used as baseline)")
-    # print("=" * 60)
-    # print("  Nothing to train — loaded at eval time from HuggingFace.")
+    print("\n" + "=" * 60)
+    print("Model 1 — GTE-small base (no training, used as baseline)")
+    print("=" * 60)
+    print("  Nothing to train — loaded at eval time from HuggingFace.")
 
-    # Model 2: GTE-small fine-tuned (random negatives)
+    # Model 2: positives only + CachedMNRL
     train_finetuned(train_qs, dev_qs, raw_schemas, CKPT_FINETUNED)
 
-    # Model 3: GTE-small fine-tuned (hard negatives)
+    # Model 3: hard negative triplets + CachedMNRL
     train_hardneg(train_qs, dev_qs, raw_schemas, bm25, tfidf, CKPT_HARDNEG)
 
-    # # Model 4: MLP fusion
-    # print("\n" + "=" * 60)
-    # print("Model 4 — MLP fusion (BM25 + TF-IDF + GTE-small)")
-    # print("=" * 60)
-    # train_mlp(bm25, tfidf, semantic, raw_schemas, train_qs,
-    #           model_path=CKPT_MLP, neg_per_query=NEG_MLP)
+    # Model 4: MLP — pass schemas_preprocessed, not raw_schemas
+    print("\n" + "=" * 60)
+    print("Model 4 — MLP fusion (BM25 + TF-IDF + GTE-small)")
+    print("=" * 60)
+    train_mlp(bm25, tfidf, semantic, schemas_preprocessed, train_qs,
+              model_path=CKPT_MLP, neg_per_query=NEG_MLP)
 
     print("\n" + "=" * 60)
     print("All models trained. Run evaluation script to test on test set.")

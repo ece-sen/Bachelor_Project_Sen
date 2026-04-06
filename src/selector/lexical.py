@@ -58,7 +58,7 @@ class LexicalSelector:
 
 if __name__ == "__main__":
 
-    preprocessor = Preprocessor()
+    preprocessor = Preprocessor(remove_generic=False, lemmatize=False)
     schemas = load_schemas("data/spider/database", preprocessor=preprocessor)
     queries = load_queries("data/spider/dev.json")
 

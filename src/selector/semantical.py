@@ -3,21 +3,19 @@ import torch
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from src.selector.schema_repr import load_schemas, load_queries, Preprocessor
+from src.selector.schema_repr import load_schemas, load_queries
 from src.evaluation.metrics import evaluate
 
 # E5 Models
 E5_MODELS = {
     "intfloat/e5-small-v2",
     "intfloat/e5-base-v2",
-    "intfloat/e5-large-v2",
-}
+    }
 
 # Nomic Models
 NOMIC_MODELS = {
-    "nomic-ai/nomic-embed-text-v1",
-    "nomic-ai/nomic-embed-text-v1.5",
-}
+    "nomic-ai/nomic-embed-text-v1"
+    }
 
 class SemanticSelector:
 

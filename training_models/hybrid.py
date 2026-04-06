@@ -92,6 +92,9 @@ def grid_search(
 ) -> tuple:
    
     best_top1   = -1.0
+    best_top3    = -1.0
+    best_mrr3    = -1.0
+    best_mrr10   = -1.0
     best_weights = None
     all_results  = []
 
@@ -115,8 +118,11 @@ def grid_search(
 
             all_results.append((alpha, beta, gamma, r["top1"], r["top3"], r["mrr@3"], r["mrr@10"]))
 
-            if r["top1"] > best_top1:
+            if (r["top1"] > best_top1 or (r["top1"] == best_top1 and r["top3"] > best_top3) or (r["top1"] == best_top1 and  r["top3"] == best_top3 and r["mrr@3"] > best_mrr3)):
                 best_top1    = r["top1"]
+                best_top3    = r["top3"]
+                best_mrr3    = r["mrr@3"]
+                best_mrr10   = r["mrr@10"]
                 best_weights = (alpha, beta, gamma)
 
     # sort and print top 10
@@ -135,9 +141,46 @@ def grid_search(
 
     return best_weights
 
+def grid_search_fast(bm25, tfidf, semantic, queries, step=0.1):
+    # compute all scores once
+    print("Pre-computing scores...")
+    all_bm25     = [_minmax_normalize(bm25.score(q["question"]))     for q in queries]
+    all_tfidf    = [_minmax_normalize(tfidf.score(q["question"]))    for q in queries]
+    all_semantic = [_minmax_normalize(semantic.score(q["question"])) for q in queries]
+
+    vals = [round(float(v), 2) for v in np.arange(0.0, 1.0 + step, step)]
+    best_top1, best_weights = -1.0, None
+    all_results = []
+
+    for alpha in vals:
+        for beta in vals:
+            gamma = round(1.0 - alpha - beta, 2)
+            if gamma < 0.0 or gamma > 1.0:
+                continue
+
+            top1_correct = 0
+            for i, q in enumerate(queries):
+                fused = {
+                    db: alpha * all_bm25[i].get(db, 0.0)
+                      + beta  * all_tfidf[i].get(db, 0.0)
+                      + gamma * all_semantic[i].get(db, 0.0)
+                    for db in all_bm25[i]
+                }
+                top1 = max(fused, key=fused.get)
+                if top1 == q["db_id"]:
+                    top1_correct += 1
+
+            top1_acc = top1_correct / len(queries)
+            all_results.append((alpha, beta, gamma, top1_acc))
+            if top1_acc > best_top1:
+                best_top1 = top1_acc
+                best_weights = (alpha, beta, gamma)
+
+    return best_weights
 
 if __name__ == "__main__":
     queries = load_queries("data/spider/dev.json")
+    print(queries[0])
 
     # Best preprocessing from for lexical/statistical selectors
     p = Preprocessor(remove_generic=True, lemmatize=True)
@@ -167,7 +210,7 @@ if __name__ == "__main__":
 
     # Grid search for optimal weights
     print("\n=== Grid search (step=0.1) — top 10 weight combos ===")
-    best = grid_search(bm25, tfidf, sbert, queries, step=0.1)
+    best = grid_search_fast(bm25, tfidf, sbert, queries, step=0.1)
 
     # Evaluate best found weights
     print(f"\n=== Best hybrid (α={best[0]}, β={best[1]}, γ={best[2]}) ===")

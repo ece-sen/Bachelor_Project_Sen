@@ -40,7 +40,7 @@ def run_eval(label, selector, test_qs):
 
 
 def print_table(rows, n_queries):
-    W = 62
+    W = 70
     print("\n" + "═" * W)
     print(f"Final Evaluation — Spider Test Set  (N={n_queries} queries)")
     print("═" * W)

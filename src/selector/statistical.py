@@ -5,7 +5,6 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from src.selector.schema_repr import load_schemas, load_queries, Preprocessor
 from src.evaluation.metrics import evaluate
-from src.selector.lexical import LexicalSelector
 
 
 class TFIDFSelector:
@@ -97,10 +96,10 @@ if __name__ == "__main__":
     queries = load_queries("data/spider/dev.json")
 
     print("Running TF-IDF...")
-    tfidf_selector = TFIDFSelector(schemas, preprocessor=preprocessor)
+    tfidf_selector = TFIDFSelector(schemas, preprocessor=preprocessor, ngram_range=(1,2))
 
     # Sanity check on first 5 queries
-    print(f"=== TF-IDF Selector with preprocessor values {preprocessor.remove_generic, preprocessor.lemmatize} — Sanity Check ===\n")
+    print(f"=== TF-IDF Selector with preprocessor values {preprocessor.remove_generic, preprocessor.lemmatize, tfidf_selector.vectorizer.ngram_range} — Sanity Check ===\n")
     for q in queries[:5]:
         question = q["question"]
         correct_db = q["db_id"]

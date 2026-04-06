@@ -27,22 +27,24 @@ def run_experiment(label: str, queries: list,
     """
     schemas = load_schemas("data/spider/database", preprocessor=preprocessor)
 
+    variant = "l"  # BM25 variant
+
     bm_r = evaluate(
-        LexicalSelector(schemas, preprocessor=preprocessor, variant="okapi"), queries)
+        LexicalSelector(schemas, preprocessor=preprocessor, variant=variant), queries)
 
     tfidf_r = evaluate(
         TFIDFSelector(schemas, preprocessor=preprocessor,
                       ngram_range=ngram_range), queries)
 
-    print(f"{'BM25':<10} {label:<35} {bm_r['top1']:>8.3f} {bm_r['top3']:>8.3f} {bm_r['mrr@3']:>8.3f} {bm_r['mrr@10']:>8.3f}")
-    print(f"{'TF-IDF':<10} {label:<35} {tfidf_r['top1']:>8.3f} {tfidf_r['top3']:>8.3f} {tfidf_r['mrr@3']:>8.3f} {tfidf_r['mrr@10']:>8.3f}")
+    print(f"{f'BM25({variant})':<20} {label:<35} {bm_r['top1']:>8.3f} {bm_r['top3']:>8.3f} {bm_r['mrr@3']:>8.3f} {bm_r['mrr@10']:>8.3f}")
+    print(f"{f'TF-IDF':<20} {label:<35} {tfidf_r['top1']:>8.3f} {tfidf_r['top3']:>8.3f} {tfidf_r['mrr@3']:>8.3f} {tfidf_r['mrr@10']:>8.3f}")
 
 
 if __name__ == "__main__":
     queries = load_queries("data/spider/dev.json")
 
-    print(f"{'Method':<10} {'Configuration':<35} {'Top-1':>8} {'Top-3':>8} {'MRR@3':>8} {'MRR@10':>8}")
-    print("-" * 83)
+    print(f"{'Method':<20} {'Configuration':<35} {'Top-1':>8} {'Top-3':>8} {'MRR@3':>8} {'MRR@10':>8}")
+    print("-" * 100)
 
     # Experiment 1 — baseline
     run_experiment("baseline", queries,
