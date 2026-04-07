@@ -23,13 +23,18 @@ random.seed(SEED)
 torch.manual_seed(SEED)
 
 
-TRAIN_PATH   = "data/spider/train_spider.json"
+TRAIN_SPIDER_PATH   = "data/spider/train_spider.json"
+TRAIN_OTHER_PATH = "data/spider/train_others.json"
 DEV_PATH     = "data/spider/dev.json"
 DATABASE_DIR = "data/spider/database"
 
-CKPT_FINETUNED = "models/gte-small-finetuned"
-CKPT_HARDNEG   = "models/gte-small-hardneg"
-CKPT_MLP       = "models/mlp_fusion.pt"
+# CKPT_FINETUNED = "models/gte-small-finetuned"
+# CKPT_HARDNEG   = "models/gte-small-hardneg"
+# CKPT_MLP       = "models/mlp_fusion.pt"
+
+CKPT_FINETUNED = "models/gte-small-finetuned-v2"
+CKPT_HARDNEG   = "models/gte-small-hardneg-v2"
+CKPT_MLP       = "models/mlp_fusion-v2.pt"
 
 BASE_MODEL     = "thenlper/gte-small"
 
@@ -93,7 +98,7 @@ def train_finetuned(train_qs, dev_qs, schemas, output_dir):
     examples   = build_random_neg_examples(train_qs, schemas)
     dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
     model      = SentenceTransformer(BASE_MODEL)
-    loss       = losses.CachedMultipleNegativesRankingLoss(model, mini_batch_size=32)
+    loss       = losses.MultipleNegativesRankingLoss(model)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
     print(f"  Examples   : {len(examples)}")
@@ -156,7 +161,7 @@ def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
     examples   = mine_hard_negatives(train_qs, schemas, bm25, tfidf, NEG_HARD)
     dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
     model      = SentenceTransformer(BASE_MODEL)
-    loss       = losses.CachedMultipleNegativesRankingLoss(model, mini_batch_size=32)
+    loss       = losses.MultipleNegativesRankingLoss (model)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
     print(f"  Examples   : {len(examples)}")
@@ -184,7 +189,9 @@ if __name__ == "__main__":
     p                    = Preprocessor(remove_generic=True, lemmatize=True)
     schemas_preprocessed = load_schemas(DATABASE_DIR, preprocessor=p)
     raw_schemas          = load_schemas(DATABASE_DIR)
-    train_qs             = load_queries(TRAIN_PATH)
+    train_spider_qs      = load_queries(TRAIN_SPIDER_PATH)
+    train_other_qs       = load_queries(TRAIN_OTHER_PATH)
+    train_qs             = train_spider_qs + train_other_qs
     dev_qs               = load_queries(DEV_PATH)
 
     print(f"  Train queries : {len(train_qs)}")
