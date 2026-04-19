@@ -30,13 +30,9 @@ TRAIN_OTHER_PATH = "data/spider/train_others.json"
 DEV_PATH     = "data/spider/dev.json"
 DATABASE_DIR = "data/spider/database"
 
-# CKPT_FINETUNED = "models/gte-small-finetuned"
-# CKPT_HARDNEG   = "models/gte-small-hardneg"
-# CKPT_MLP       = "models/mlp_fusion.pt"
-
-CKPT_FINETUNED = "models/gte-small-finetuned-v2"
-CKPT_HARDNEG   = "models/gte-small-hardneg-v2"
-CKPT_MLP       = "models/mlp_fusion-v2.pt"
+CKPT_FINETUNED = "models/gte-small-finetuned"
+CKPT_HARDNEG   = "models/gte-small-hardneg"
+CKPT_MLP       = "models/mlp_fusion.pt"
 
 BASE_MODEL     = "thenlper/gte-small"
 

@@ -1,20 +1,3 @@
-"""
-RQ2 — Hybrid Database Selector
-
-Combines BM25, TF-IDF, and a semantic (SBERT/E5/GTE) selector
-into a single score using weighted linear fusion:
-
-    hybrid_score(q, db) = α·bm25 + β·tfidf + γ·semantic
-
-All three raw score dicts are min-max normalized to [0, 1]
-before fusion so the different score ranges (BM25 is unbounded,
-cosine similarity is already [0, 1]) don't skew the result.
-
-If a selector is not provided its weight is redistributed
-proportionally to the remaining selectors, so you can also
-run this as a two-selector hybrid.
-"""
-
 import sys
 import os
 import numpy as np
