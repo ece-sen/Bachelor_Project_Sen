@@ -2,6 +2,8 @@ import os
 import sys
 import random
 from pathlib import Path
+import os
+os.environ["PYTORCH_ALLOC_CONF"] = "expandable_segments:True"
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -72,7 +74,7 @@ def _dev_evaluator(dev_qs, schemas):
                                                    name="dev-similarity")
 
 
-# Model 2 — GTE-small fine-tuned with random negatives
+# Model 2 - GTE-small fine-tuned with random negatives
 
 def build_random_neg_examples(train_qs, schemas):
     """
@@ -92,7 +94,7 @@ def build_random_neg_examples(train_qs, schemas):
 
 def train_finetuned(train_qs, dev_qs, schemas, output_dir):
     print("\n" + "=" * 60)
-    print("Model 2 — GTE-small fine-tuned (random negatives)")
+    print("Model 2 - GTE-small fine-tuned (random negatives)")
     print("=" * 60)
 
     examples   = build_random_neg_examples(train_qs, schemas)
@@ -118,7 +120,7 @@ def train_finetuned(train_qs, dev_qs, schemas, output_dir):
     print(f"  Saved to {output_dir}")
 
 
-# Model 3 — GTE-small fine-tuned with hard negatives
+# Model 3 - GTE-small fine-tuned with hard negatives
 
 def mine_hard_negatives(train_qs, schemas, bm25, tfidf, neg_per_query):
     all_dbs  = list(schemas.keys())
@@ -155,12 +157,17 @@ def mine_hard_negatives(train_qs, schemas, bm25, tfidf, neg_per_query):
 
 def train_hardneg(train_qs, dev_qs, schemas, bm25, tfidf, output_dir):
     print("\n" + "=" * 60)
-    print("Model 3 — GTE-small fine-tuned (hard negatives)")
+    print("Model 3 - GTE-small fine-tuned (hard negatives)")
     print("=" * 60)
 
     examples   = mine_hard_negatives(train_qs, schemas, bm25, tfidf, NEG_HARD)
-    dataloader = DataLoader(examples, shuffle=True, batch_size=BATCH_SIZE)
+
+    HARD_NEG_BATCH = 16 # reduced bc of memory issues in kaggle
+
+    dataloader = DataLoader(examples, shuffle=True, batch_size=HARD_NEG_BATCH)
     model      = SentenceTransformer(BASE_MODEL)
+    # Enable gradient checkpointing to save memory
+    model[0].auto_model.gradient_checkpointing_enable()
     loss       = losses.MultipleNegativesRankingLoss (model)
     evaluator  = _dev_evaluator(dev_qs, schemas)
 
@@ -204,19 +211,24 @@ if __name__ == "__main__":
     semantic = SemanticSelector(raw_schemas, model_name=BASE_MODEL)
 
     print("\n" + "=" * 60)
-    print("Model 1 — GTE-small base (no training, used as baseline)")
+    print("Model 1 - GTE-small base (no training, used as baseline)")
     print("=" * 60)
-    print("  Nothing to train — loaded at eval time from HuggingFace.")
+    print("  Nothing to train - loaded at eval time from HuggingFace.")
 
     # Model 2: positives only + CachedMNRL
     train_finetuned(train_qs, dev_qs, raw_schemas, CKPT_FINETUNED)
 
+    # Free memory from Model 2 before training Model 3
+    import torch, gc
+    gc.collect()
+    torch.cuda.empty_cache()
+
     # Model 3: hard negative triplets + CachedMNRL
     train_hardneg(train_qs, dev_qs, raw_schemas, bm25, tfidf, CKPT_HARDNEG)
 
-    # Model 4: MLP — pass schemas_preprocessed, not raw_schemas
+    # Model 4: MLP - pass schemas_preprocessed, not raw_schemas
     print("\n" + "=" * 60)
-    print("Model 4 — MLP fusion (BM25 + TF-IDF + GTE-small)")
+    print("Model 4 - MLP fusion (BM25 + TF-IDF + GTE-small)")
     print("=" * 60)
     train_mlp(bm25, tfidf, semantic, schemas_preprocessed, train_qs,
               model_path=CKPT_MLP, neg_per_query=NEG_MLP)

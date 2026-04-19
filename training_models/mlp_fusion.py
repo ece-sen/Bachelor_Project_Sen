@@ -26,8 +26,7 @@ torch.manual_seed(SEED)
 
 # Config 
 MODEL_PATH   = "models/mlp_fusion.pt"
-TRAIN_SPIDER_PATH   = "data/spider/train_spider.json"
-TRAIN_OTHER_PATH = "data/spider/train_others.json"
+TRAIN_PATH   = "data/spider/train_spider.json"
 DEV_PATH     = "data/spider/dev.json"
 DATABASE_DIR = "data/spider/database"
 
@@ -221,9 +220,7 @@ if __name__ == "__main__":
     p                    = Preprocessor(remove_generic=True, lemmatize=True)
     schemas_preprocessed = load_schemas(DATABASE_DIR, preprocessor=p)
     raw_schemas          = load_schemas(DATABASE_DIR)
-    train_spider_qs      = load_queries(TRAIN_SPIDER_PATH)
-    train_other_qs       = load_queries(TRAIN_OTHER_PATH)
-    train_qs             = train_spider_qs + train_other_qs
+    train_qs             = load_queries(TRAIN_PATH)
     dev_qs               = load_queries(DEV_PATH)
 
     # Build base selectors
@@ -234,10 +231,10 @@ if __name__ == "__main__":
     semantic = SemanticSelector(raw_schemas, model_name="thenlper/gte-small")
 
     # Train MLP
-    train_mlp(bm25, tfidf, semantic, schemas_preprocessed, train_qs)
+    train_mlp(bm25, tfidf, semantic, raw_schemas, train_qs)
 
     # Evaluate on dev 
     print("\nEvaluating MLP fusion on dev set...")
     selector = MLPFusionSelector(bm25, tfidf, semantic, MODEL_PATH)
     r        = evaluate(selector, dev_qs)
-    print(f"Top-1: {r['top1']:.3f}  Top-3: {r['top3']:.3f}  MRR@3: {r['mrr@3']:.3f}  MRR@10: {r['mrr@10']:.3f}")
+    print(f"Top-1: {r['top1']:.3f}  Top-3: {r['top3']:.3f}  MRR: {r['mrr']:.3f}")

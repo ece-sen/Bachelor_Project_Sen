@@ -47,14 +47,17 @@ The model was trained with the parameters:
 
 **DataLoader**:
 
-`torch.utils.data.dataloader.DataLoader` of length 1750 with parameters:
+`torch.utils.data.dataloader.DataLoader` of length 3789 with parameters:
 ```
 {'batch_size': 16, 'sampler': 'torch.utils.data.sampler.RandomSampler', 'batch_sampler': 'torch.utils.data.sampler.BatchSampler'}
 ```
 
 **Loss**:
 
-`sentence_transformers.losses.CosineSimilarityLoss.CosineSimilarityLoss` 
+`sentence_transformers.losses.MultipleNegativesRankingLoss.MultipleNegativesRankingLoss` with parameters:
+  ```
+  {'scale': 20.0, 'similarity_fct': 'cos_sim'}
+  ```
 
 Parameters of the fit()-Method:
 ```
@@ -69,7 +72,7 @@ Parameters of the fit()-Method:
     },
     "scheduler": "WarmupLinear",
     "steps_per_epoch": null,
-    "warmup_steps": 525,
+    "warmup_steps": 1136,
     "weight_decay": 0.01
 }
 ```

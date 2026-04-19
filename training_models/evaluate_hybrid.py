@@ -10,7 +10,7 @@ from src.selector.lexical     import LexicalSelector
 from src.selector.statistical import TFIDFSelector
 from src.selector.semantical  import SemanticSelector
 from src.evaluation.metrics   import evaluate
-from mlp_fusion               import FusionMLP, MLPFusionSelector
+from training_models.mlp_fusion import FusionMLP, MLPFusionSelector
 
 DATA_TEST_PATH    = "data/spider/test.json"
 DATABASE_DIR      = "data/spider/database"        # train+dev schemas
@@ -18,13 +18,13 @@ TEST_DATABASE_DIR = "data/spider/test_database"   # test schemas
 
 CKPT_FINETUNED = "models/gte-small-finetuned"
 CKPT_HARDNEG   = "models/gte-small-hardneg"
-CKPT_MLP       = "models/mlp_fusion.pt"
+CKPT_MLP_V2    = "models/mlp_fusion.pt"
 BASE_MODEL     = "thenlper/gte-small"
 
 
 def check_checkpoints():
     missing = []
-    for path in [CKPT_FINETUNED, CKPT_HARDNEG, CKPT_MLP]:
+    for path in [CKPT_FINETUNED, CKPT_HARDNEG, CKPT_MLP_V2]:
         if not Path(path).exists():
             missing.append(path)
     if missing:
@@ -122,12 +122,13 @@ if __name__ == "__main__":
     #
     # bm25, tfidf, and semantic_base are all already built on test schemas above,
     # so MLPFusionSelector will iterate test db_ids and score them correctly.
-    if Path(CKPT_MLP).exists():
-        print("Evaluating Model 4 — MLP fusion (BM25+TF-IDF+GTE)...")
-        mlp_selector = MLPFusionSelector(bm25, tfidf, semantic_base, CKPT_MLP)
-        results.append(run_eval("MLP fusion (BM25+TF-IDF+GTE)", mlp_selector, test_qs))
+
+    if Path(CKPT_MLP_V2).exists():
+            print("Evaluating Model 4 — MLP fusion v2 (BM25+TF-IDF+GTE)...")
+            mlp_selector = MLPFusionSelector(bm25, tfidf, semantic_base, CKPT_MLP_V2)
+            results.append(run_eval("MLP fusion v2 (BM25+TF-IDF+GTE)", mlp_selector, test_qs))
     else:
-        print(f"Skipping Model 4 — checkpoint not found: {CKPT_MLP}")
+        print(f"Skipping Model 4 — checkpoint not found: {CKPT_MLP_V2}")
 
     # ── Best hybrid ──────────────────────────────────────────────────────────
     from hybrid import HybridSelector
