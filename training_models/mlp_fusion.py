@@ -15,7 +15,7 @@ from src.selector.lexical     import LexicalSelector
 from src.selector.statistical import TFIDFSelector
 from src.selector.semantical  import SemanticSelector
 from src.evaluation.metrics   import evaluate
-from hybrid import _minmax_normalize  
+from training_models.hybrid import _minmax_normalize  
 
 
 # Reproducibility

@@ -16,8 +16,8 @@ from src.selector.schema_repr import load_schemas, load_queries, Preprocessor
 from src.selector.lexical     import LexicalSelector
 from src.selector.statistical import TFIDFSelector
 from src.selector.semantical  import SemanticSelector
-from mlp_fusion               import FusionMLP, FusionDataset, train_mlp
-from hybrid                   import _minmax_normalize
+from training_models.mlp_fusion               import FusionMLP, FusionDataset, train_mlp
+from training_models.hybrid                   import _minmax_normalize
 
 # Reproducibility
 SEED = 42
