@@ -1,0 +1,3434 @@
+Error Analysis -- mlp_fusion
+============================================================
+Total queries  : 2147
+Top-1 failures : 539
+Top-1 accuracy : 0.749
+Top-3 accuracy : 0.911
+MRR@3          : 0.821
+MRR@10         : 0.835
+
+Category breakdown:
+  NEAR_MISS                   347  (64.4%)
+  AMBIGUOUS                   189  (35.1%)
+  VOCAB_DIVERGENCE            147  (27.3%)
+  OTHER                        70  (13.0%)
+  FAR_MISS                     36  (6.7%)
+  SCHEMA_CONFUSION             16  (3.0%)
+
+Component blame:
+  semantic          473
+  bm25              339
+  tfidf             313
+
+Top 10 confused DB pairs:
+  e_commerce                     tracking_orders                  28
+  book_1                         book_press                       23
+  customers_and_orders           e_commerce                       18
+  customers_and_orders           products_gen_characteristics     18
+  real_estate_properties         real_estate_rentals              13
+  aan_1                          scholar                          11
+  behavior_monitoring            cre_Students_Information_Systems   10
+  address_1                      world_1                           9
+  address_1                      geo                               9
+  advertising_agencies           tracking_orders                   9
+
+
+All failures (sorted by category):
+============================================================
+
+Q: What is the most popular payment method?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 7)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are all the order status and all the dates of orders?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 10)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many items are shipped?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How much do the products cost on average?
+Correct DB : e_commerce
+Predicted  : products_for_hire  (rank of correct: 10)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the least common order status?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of products.
+Correct DB : customers_and_orders
+Predicted  : store_product  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the price for the product with name Monitor?
+Correct DB : customers_and_orders
+Predicted  : manufactory_1  (rank of correct: 10)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give the price of the Monitor product.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Give the id and name of the cheapest Hardware product.
+Correct DB : customers_and_orders
+Predicted  : manufacturer  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Count the number of buildings.
+Correct DB : region_building
+Predicted  : apartment_rentals  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List details of all the channel in alphabetical order .
+Correct DB : government_shift
+Predicted  : bbc_channels  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Find all the customers whose name contains "Kutch".
+Correct DB : government_shift
+Predicted  : customers_campaigns_ecommerce  (rank of correct: 10)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Return the number of orders received for Pride and Prejudice.
+Correct DB : book_1
+Predicted  : tracking_orders  (rank of correct: 6)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which club name contains the string 'state'?
+Correct DB : club_leader
+Predicted  : club_1  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Which state has most number of cities?
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 5)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the state that has the most cities.
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which country has fewest number of cities?
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 6)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give the country with the fewest number of cities.
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 10)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: How many students live in each country?
+Correct DB : address_1
+Predicted  : student_transcripts_tracking  (rank of correct: 9)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the state that has the most students.
+Correct DB : address_1
+Predicted  : university_rank  (rank of correct: 7)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give the country with the fewest students.
+Correct DB : address_1
+Predicted  : country_language  (rank of correct: 5)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the maximum and minimum age of driver?
+Correct DB : car_road_race
+Predicted  : school_bus  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: When did the user with login name ratione register?
+Correct DB : real_estate_rentals
+Predicted  : e_learning  (rank of correct: 7)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Find the highest and lowest points of drivers.
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Sort the driver names by age in ascending order.
+Correct DB : car_racing
+Predicted  : car_road_race  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all different types of contents ordered by contents.
+Correct DB : warehouse_1
+Predicted  : student_1  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What position does Amy Wong have?
+Correct DB : planet_1
+Predicted  : club_1  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many authors do we have?
+Correct DB : cre_Doc_Workflow
+Predicted  : book_1  (rank of correct: 10)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all author names.
+Correct DB : cre_Doc_Workflow
+Predicted  : e_learning  (rank of correct: 8)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the other details for the author Addison Denesik.
+Correct DB : cre_Doc_Workflow
+Predicted  : book_1  (rank of correct: 5)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Who is the author of the document "Travel to Brazil"?
+Correct DB : cre_Doc_Workflow
+Predicted  : scholar  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Show the names and descriptions for all documents.
+Correct DB : cre_Doc_Workflow
+Predicted  : cre_Doc_and_collections  (rank of correct: 7)
+Categories : AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the name of the author with most number of documents?
+Correct DB : cre_Doc_Workflow
+Predicted  : book_1  (rank of correct: 8)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the names for authors with at least two documents.
+Correct DB : cre_Doc_Workflow
+Predicted  : book_1  (rank of correct: 7)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of invoices.
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 5)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the invoice status code with most number of invoices.
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of payments.
+Correct DB : advertising_agencies
+Predicted  : tracking_share_transactions  (rank of correct: 7)
+Categories : AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the order that total cost the least , and how much is the total cost ?
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: None)
+Categories : FAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the total cost of all the orders ? List the order id , date , and total cost .
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: None)
+Categories : FAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: For each order, what is its id, date, and total amount paid?
+Correct DB : e_commerce
+Predicted  : department_store  (rank of correct: None)
+Categories : FAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many different customers have ordered things?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: None)
+Categories : FAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the product average price?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all information on students.
+Correct DB : online_exams
+Predicted  : cre_Students_Information_Systems  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of addresses.
+Correct DB : customers_and_orders
+Predicted  : apartment_rentals  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all address ids and address details.
+Correct DB : customers_and_orders
+Predicted  : e_government  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are all the address ids and address details?
+Correct DB : customers_and_orders
+Predicted  : address_1  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Return the average price of Clothes.
+Correct DB : customers_and_orders
+Predicted  : manufacturer  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the maximum and the minimum sale price?
+Correct DB : book_1
+Predicted  : real_estate_rentals  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the average purchase price and the average sale price?
+Correct DB : book_1
+Predicted  : tracking_share_transactions  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the maximum difference between the sale price and purchase price?
+Correct DB : book_1
+Predicted  : products_gen_characteristics  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the largest difference in sale price and purchase price.
+Correct DB : book_1
+Predicted  : tracking_share_transactions  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of customers.
+Correct DB : restaurant_bills
+Predicted  : tracking_orders  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the names of customers that do not have any order.
+Correct DB : restaurant_bills
+Predicted  : customers_and_orders  (rank of correct: None)
+Categories : FAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the nations that have at least two members.
+Correct DB : club_leader
+Predicted  : party_people  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of cities.
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: How many countries do we have?
+Correct DB : address_1
+Predicted  : country_language  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of coutries.
+Correct DB : address_1
+Predicted  : apartment_rentals  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many students live in China?
+Correct DB : address_1
+Predicted  : cre_Students_Information_Systems  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the number of students living in each country.
+Correct DB : address_1
+Predicted  : student_transcripts_tracking  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which state has most number of students?
+Correct DB : address_1
+Predicted  : geo  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which country has least number of students?
+Correct DB : address_1
+Predicted  : student_1  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the first name and last name of the student living furthest to Linda Smith?
+Correct DB : address_1
+Predicted  : network_1  (rank of correct: None)
+Categories : FAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all names who have been in both ACL and Naccl.
+Correct DB : conference
+Predicted  : university_basketball  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the name of the scuplture that was created most recently ?
+Correct DB : art_1
+Predicted  : academic  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Which countries and cities are included in addresses?
+Correct DB : real_estate_rentals
+Predicted  : address_1  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the countries and cities for each address?
+Correct DB : real_estate_rentals
+Predicted  : address_1  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the login names of all senior citizens, sorted by first name?
+Correct DB : real_estate_rentals
+Predicted  : e_learning  (rank of correct: None)
+Categories : FAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many cusomters visited on each date?
+Correct DB : bakery_1
+Predicted  : museum_visit  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the ids of customers who have spent over 150 dollars in total?
+Correct DB : bakery_1
+Predicted  : museum_visit  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Find the total number of drivers.
+Correct DB : car_racing
+Predicted  : shop_membership  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all the distinct ratings in the database.
+Correct DB : movie_2
+Predicted  : orchestra  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the dates of all shipments.
+Correct DB : planet_1
+Predicted  : tracking_orders  (rank of correct: None)
+Categories : FAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Show the number of documents.
+Correct DB : cre_Doc_Workflow
+Predicted  : document_management  (rank of correct: None)
+Categories : FAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: How many clubs are there?
+Correct DB : soccer_3
+Predicted  : club_leader  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the name of clubs in ascending alphabetical order.
+Correct DB : soccer_3
+Predicted  : club_leader  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the name of the player with the highest earnings?
+Correct DB : soccer_3
+Predicted  : poker_player  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Return the name of the player who earns the most money.
+Correct DB : soccer_3
+Predicted  : poker_player  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the distinct countries of players with earnings higher than 1200000?
+Correct DB : soccer_3
+Predicted  : poker_player  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Show names of players and names of clubs they are in.
+Correct DB : soccer_3
+Predicted  : riding_club  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the names of players from the club managed by Sam Allardyce?
+Correct DB : soccer_3
+Predicted  : riding_club  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Please show the most common manufacturer of clubs.
+Correct DB : soccer_3
+Predicted  : manufacturer  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Which manufacturer is most common among clubs?
+Correct DB : soccer_3
+Predicted  : manufacturer  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: List the manufacturers that are associated with more than one club.
+Correct DB : soccer_3
+Predicted  : manufacturer  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: List the country that have more than one player.
+Correct DB : soccer_3
+Predicted  : match_season  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which countries have produced more than one player?
+Correct DB : soccer_3
+Predicted  : match_season  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of clubs that do not have any players?
+Correct DB : soccer_3
+Predicted  : club_leader  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the number of distinct countries of all players?
+Correct DB : soccer_3
+Predicted  : match_season  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many different countries are players from?
+Correct DB : soccer_3
+Predicted  : match_season  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the earnings of players from either of the countries of Australia or Zimbabwe?
+Correct DB : soccer_3
+Predicted  : poker_player  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: For the orders with any produts, how many products does each orders contain ? List the order id, status and the number.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: For every order, how many products does it contain, and what are the orders' statuses and ids?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the id, name, price and color of the products which have not been ordered for at least twice?
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the ids , names , prices , and colors of all products that have been listed in less than two orders ?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Which product are listed in orders most frequently? List the id, product name and price.
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which order have the least sum of the product prices. List the order id and sum.
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many orders has each gender placed?
+Correct DB : e_commerce
+Predicted  : department_store  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: List the customers' first name, middle initial, last name and payment methods.
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: 2)
+Categories : NEAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['semantic']
+
+Q: List the invoices' status, date and the date of shipment.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the statuses, dates, and shipment dates for all invoices?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the names of the products being shipped and the corresponding shipment date.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the status code of the items being ordered and shipped and its corresponding shipment tracking number?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the status code of the items have been ordered and shipped, and also what are their shipment tracking numbers?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names and colors of all products that have been shipped?
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are invoices status of all the orders which have not been shipped?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the invoice statuses for all orderes that have not been shipped out yet?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.077
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many different item status codes are there listed in ordered items?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the product sizes of the products whose name has the substring 'Dell'?
+Correct DB : e_commerce
+Predicted  : store_product  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the sizes of all products whose name includes the word 'Dell'?
+Correct DB : e_commerce
+Predicted  : store_product  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the product price and the product size of the products whose price is above average?
+Correct DB : e_commerce
+Predicted  : store_product  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: List all the pairs of buyer first names and product names.
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the first names of all buyers and what products did they buy? List them in pairs.
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: How many products have been shipped?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the average price of the products being ordered?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What is the price of all products being ordered on average?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the email address, town and county of the customers who are of the least common gender?
+Correct DB : e_commerce
+Predicted  : customer_complaints  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: What is the most uncommon order status?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: For all the products sold for more than 3 times, list their id and description.
+Correct DB : e_commerce
+Predicted  : products_for_hire  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: For all products sold more than 3 times, what are their ids and descriptions?
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.083
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the dates and ids of the invoices that are related to at least 2 shipments?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: what are all shipment tracking numbers and shipment dates?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the tracking numbers and dates for all shipments listed?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the color, description and size of the products priced below the maximum price.
+Correct DB : e_commerce
+Predicted  : store_product  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the colors , descriptions , and sizes for all products that are not at the maximum price ?
+Correct DB : e_commerce
+Predicted  : store_product  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names and original air dates of tv shows?
+Correct DB : tv_shows
+Predicted  : tvshow  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the maximum and average power for the vehicles manufactured by 'Zhuzhou'?
+Correct DB : vehicle_driver
+Predicted  : vehicle_rent  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: How many drivers have raced in 'NASCAR'?
+Correct DB : vehicle_driver
+Predicted  : car_road_race  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of drivers who have raced in NASCAR.
+Correct DB : vehicle_driver
+Predicted  : car_road_race  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the model names and build year of the cars with 'DJ' in its model name?
+Correct DB : vehicle_driver
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the model and build year of cars that include "DJ" in their model names.
+Correct DB : vehicle_driver
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the models which have not been driven by any drivers?
+Correct DB : vehicle_driver
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: Give me an alphabetically ordered list of the distinct subject code for exams.
+Correct DB : online_exams
+Predicted  : e_learning  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Please show the least common assessment for students.
+Correct DB : online_exams
+Predicted  : student_assessment  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which assessment has the smallest frequency count?
+Correct DB : online_exams
+Predicted  : student_assessment  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Please show the first names of the students that have at least two answer records.
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: List the last names of the students whose gender is not "M".
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List each gender and the corresponding number of students.
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: For each gender, return the gender code and the number of students who identify as that gender.
+Correct DB : online_exams
+Predicted  : cre_Students_Information_Systems  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: List the last names of the students whose gender is "F" or "M".
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the first names of the students who do not have any answers.
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the average price for products with type Clothes?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many hardware type products do we have?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of products of the type Hardware.
+Correct DB : customers_and_orders
+Predicted  : store_product  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all product names with price higher than the average.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the names of products that have a price above the average for all products.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Show all hardware product names with price higher than the average price of hardware type products.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What is the name of the most expensive product with type Clothes?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Give the name of the most expensive Clothes product.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are the names of the products, sorted by descending price?
+Correct DB : customers_and_orders
+Predicted  : product_catalog  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf']
+
+Q: What are the names of all Hardware products, sorted by price ascending?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many products are there for each product type?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all product type codes and the average price for each type.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the average price of products for each product type?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the product type codes of product types that have two or more products.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the most frequent product type code?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Give the address, phone, and email for customers with the name Jeromy.
+Correct DB : customers_and_orders
+Predicted  : customer_complaints  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give the code of the payment method that is most commonly used.
+Correct DB : customers_and_orders
+Predicted  : cre_Drama_Workshop_Groups  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What is the code of the product type that is least common?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Show all order status and the number of orders in each status.
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, SCHEMA_CONFUSION, AMBIGUOUS
+Schema similarity (Jaccard): 0.4
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of customers who have not made an order.
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.4
+Misleading components: ['bm25', 'semantic']
+
+Q: How many products named Monitor have been ordered?
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.4
+Misleading components: ['semantic']
+
+Q: What is the total number of Monitor products that have been ordered?
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.4
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of different customers who have bought a Monitor Product.
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.4
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of differnt customers who have made an order.
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.4
+Misleading components: ['bm25', 'semantic']
+
+Q: List the addresses of buildings in descending order of building completion year.
+Correct DB : region_building
+Predicted  : apartment_rentals  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is the average population for all regions?
+Correct DB : region_building
+Predicted  : world_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Compute the average population of a region.
+Correct DB : region_building
+Predicted  : world_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Give me a list of distinct building addresses.
+Correct DB : region_building
+Predicted  : apartment_rentals  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: What is the list of channel details ordered alphabetically ?
+Correct DB : government_shift
+Predicted  : bbc_channels  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of services.
+Correct DB : government_shift
+Predicted  : apartment_rentals  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show names for all vehicles in descending order of model year.
+Correct DB : vehicle_rent
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the names of all vehicles, ordered by model year descending?
+Correct DB : vehicle_rent
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the different types of powertrains?
+Correct DB : vehicle_rent
+Predicted  : products_gen_characteristics  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the types of powertrains that have vehicles that were made in both 2013 and 2014?
+Correct DB : vehicle_rent
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.083
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show the name, age, membership credit for all customers?
+Correct DB : vehicle_rent
+Predicted  : restaurant_bills  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are the names, ages, and membership credits for all customers?
+Correct DB : vehicle_rent
+Predicted  : restaurant_bills  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Show the name and age of the customer with maximum membership credit.
+Correct DB : vehicle_rent
+Predicted  : restaurant_bills  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the average age for customers with a membership credit above the average?
+Correct DB : vehicle_rent
+Predicted  : coffee_shop  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Show all information for all discounts.
+Correct DB : vehicle_rent
+Predicted  : products_for_hire  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Return all information about discounts.
+Correct DB : vehicle_rent
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What is the average amount of a student loan?
+Correct DB : cre_Students_Information_Systems
+Predicted  : loan_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Which teachers teach a class that has the substring 'data' in its detail but do not teach a class that has prefix 'net' in its detail? Give me the teacher details.
+Correct DB : cre_Students_Information_Systems
+Predicted  : course_teach  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: List the detail and id of the teacher who teaches the most courses.
+Correct DB : cre_Students_Information_Systems
+Predicted  : course_teach  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the detail and id of the teacher who teaches the largest number of courses?
+Correct DB : cre_Students_Information_Systems
+Predicted  : course_teach  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the distinct descriptions of all the detentions which have ever happened?
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the distinct descriptions of all the detentions that have happened.
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the personal details and the address type descriptions of all the students.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25']
+
+Q: What are the personal details and the address type descriptions of each student?
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_assessment  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: How many teachers have taught a student who has not won any achievements?
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Count the number of teachers who have taught students who have never won an achievement.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: List the date of the transcripts and the transcript details.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_transcripts_tracking  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the date and detail of each transcript?
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_transcripts_tracking  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Show the detention start time and end time of the detentions.
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the starting time and ending time of each detention record?
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: List the details for all the pairs of teachers and students who are in the same class.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the pairs of teachers and students who are in the same class? Give me the pairs of their details.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is the least common detention type? Show the type code and the description.
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: Give me the type code and description of the least common detention type.
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: When was the earliest date of loan?
+Correct DB : cre_Students_Information_Systems
+Predicted  : loan_1  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Return the earliest date of loan in the record.
+Correct DB : cre_Students_Information_Systems
+Predicted  : loan_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which teachers have taught the student with the earliest transcript issuance? List the teacher details.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many courses does each student take? List the student id, the student biographical data and the course count.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_assessment  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the code and description of the most common student address type?
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the most common student address type? Give me the code and description of the address type.
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the start time and end time of addresses for the students who receive 2 transcripts?
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_assessment  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: When did all the detentions start?
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give me the detention start date for all the detention records.
+Correct DB : cre_Students_Information_Systems
+Predicted  : behavior_monitoring  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all the author names.
+Correct DB : book_1
+Predicted  : aan_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show all Client names and their addresses.
+Correct DB : book_1
+Predicted  : browser_web  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the names and addressed of all clients?
+Correct DB : book_1
+Predicted  : advertising_agencies  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: List all Book titles, ISBNs, and sale prices.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the titles, ISBNs, and sale prices for all books?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: How many authors are there?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: How many clients are there?
+Correct DB : book_1
+Predicted  : advertising_agencies  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the names of all the authors, and how many books has each written?
+Correct DB : book_1
+Predicted  : book_2  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show the book title corresponding to the book with the most number of orders.
+Correct DB : book_1
+Predicted  : book_review  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the title of the book that has been ordered the greatest number of times?
+Correct DB : book_1
+Predicted  : book_review  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the different titles of books that have been ordered in the past?
+Correct DB : book_1
+Predicted  : book_2  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show all book titles for books that have no orders.
+Correct DB : book_1
+Predicted  : book_review  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the titles of books that have never been ordered?
+Correct DB : book_1
+Predicted  : book_2  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show all client names for clients who have not made orders.
+Correct DB : book_1
+Predicted  : advertising_agencies  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Give the maximum and minimum sale price of books.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Give the average purchase price and average sale price for books.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the titles of books with sale prices above the average sale price across all books?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all book titles which have the lowest sale price .
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the titles of books that have a sale price equal to the lowest sale price across all books ?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.083
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the titles of books with the highest purchase price across all books ?
+Correct DB : book_1
+Predicted  : book_2  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the average sale price of books written by George Orwell?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the average sale price of books authored by George Orwell.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are sale prices of books written by Plato?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the sale prices of books authored by Plato.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the title of book by George Orwell that has the lowest saleprice.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the title of the book written by Plato has price lower than the average sale price of all books?
+Correct DB : book_1
+Predicted  : book_2  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the titles of books authored by Plato that have a sale price lower than the average sale price across all books.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.071
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Who is the author of the book "Pride and Prejudice"?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give the name of the author who wrote the book titled Pride and Prejudice.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: List titles of all books published by an author whose name contains the string 'Plato'?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the titles of all books written by an author with a name that contains Plato?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show ids for orders including both "Pride and Prejudice" and "The Little Prince".
+Correct DB : book_1
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the order ids for orders that include both Pride and Prejudice and The Little Prince?
+Correct DB : book_1
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many books are there?
+Correct DB : book_review
+Predicted  : book_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: List the titles of books in ascending alphabetical order.
+Correct DB : book_review
+Predicted  : book_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the types and release dates of books?
+Correct DB : book_review
+Predicted  : book_press  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the average rating in reviews?
+Correct DB : book_review
+Predicted  : yelp  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the types of books that have at least three books belonging to?
+Correct DB : book_review
+Predicted  : book_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Show different nationalities of customers, along with the number of customers of each nationality.
+Correct DB : restaurant_bills
+Predicted  : customers_and_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Show the nations that have both customers with card credit smaller than 50 and customers with card credit bigger than 75.
+Correct DB : restaurant_bills
+Predicted  : customers_card_transactions  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Which nations have both customers with card credit above 50 and customers with card credit below 75.
+Correct DB : restaurant_bills
+Predicted  : customers_card_transactions  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the names and nationalities of the members?
+Correct DB : club_leader
+Predicted  : performance_attendance  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show different nationalities along with the number of members of each nationality.
+Correct DB : club_leader
+Predicted  : performance_attendance  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Please show the most common nationality of members.
+Correct DB : club_leader
+Predicted  : performance_attendance  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the parent document of document owned by Marlin? List the document id.
+Correct DB : cre_Doc_and_collections
+Predicted  : document_management  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: How many documents owned by Marlin?
+Correct DB : cre_Doc_and_collections
+Predicted  : cre_Docs_and_Epenses  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the count of documents owned by Marlin?
+Correct DB : cre_Doc_and_collections
+Predicted  : document_management  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many child documents does each parent document has? List the document id and the number.
+Correct DB : cre_Doc_and_collections
+Predicted  : document_management  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: How many songs contain "Love" in their names?
+Correct DB : sing_contest
+Predicted  : music_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: List the name of the songs in ascending, lexicographical order.
+Correct DB : sing_contest
+Predicted  : music_2  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Which song names have the substring "Is"?
+Correct DB : sing_contest
+Predicted  : music_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the names, codes, states, and countries for all cities?
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Show names for all cities in state PA.
+Correct DB : address_1
+Predicted  : tv_shows  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the names of all cities in PA?
+Correct DB : address_1
+Predicted  : restaurants  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: How many cities are in Canada?
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: How many cities are in each state?
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: How many cities are there in each country?
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: List all states with at least two cities.
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which states have at least two cities?
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the first names and majors of students living in Baltimore?
+Correct DB : address_1
+Predicted  : dorm_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: Find the number of students living in each city.
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the ids for male students not in the USA?
+Correct DB : address_1
+Predicted  : cre_Students_Information_Systems  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Sort all store names by store open date.
+Correct DB : headphone_store
+Predicted  : department_store  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give me a list of store names, sorted by store open date.
+Correct DB : headphone_store
+Predicted  : department_store  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: find the number of stores in each neighborhood.
+Correct DB : headphone_store
+Predicted  : store_product  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: How many authors do we have?
+Correct DB : aan_1
+Predicted  : book_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: How many papers do we have?
+Correct DB : aan_1
+Predicted  : icfp_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of affiliations.
+Correct DB : aan_1
+Predicted  : tracking_share_transactions  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: Count the number of papers published by Columbia University in 2009.
+Correct DB : aan_1
+Predicted  : university_rank  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the distinct venues for papers, ordered by year?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the names of all authors who have more than 50 papers?
+Correct DB : aan_1
+Predicted  : icfp_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the names of authors who have exactly 1 paper?
+Correct DB : aan_1
+Predicted  : icfp_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is the venue and year with the most number of publications?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What was the venue and year with the most publications?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the venue with the least number of publications?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Which venue has the fewest publications?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Give the title of the paper which cites most number of papers?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What is the title of the paper which cites the most other papers?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: How many papers does Mckeown , Kathleen cite ?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the venues and years where Columbia University had papers ?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Which venues and years did Columbia University have papers ?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of papers Columbia University had during or prior to 2009 .
+Correct DB : aan_1
+Predicted  : university_rank  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: How many collaborators has Mckeown , Kathleen had ?
+Correct DB : aan_1
+Predicted  : culture_company  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Find the id of the papers whose title has the key word 'translation'.
+Correct DB : aan_1
+Predicted  : icfp_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Find the number of papers published in different conferences each year.
+Correct DB : aan_1
+Predicted  : conference  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many papers are published in each venue in each year?
+Correct DB : aan_1
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the names, locations, and founding years for all institutions?
+Correct DB : conference
+Predicted  : university_basketball  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: How many institution are founded between 1850 and 1900?
+Correct DB : conference
+Predicted  : institution_sports  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many institutions were founded between 1850 and 1900?
+Correct DB : conference
+Predicted  : institution_sports  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the maximum and minimum ages for all staff?
+Correct DB : conference
+Predicted  : museum_visit  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the names of everbody who has participated in both the ACL and NACCL conferences?
+Correct DB : conference
+Predicted  : scholar  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: How many different places have some plane?
+Correct DB : pilot_1
+Predicted  : flight_2  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Count the number of different locations of hangars.
+Correct DB : pilot_1
+Predicted  : apartment_rentals  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: Find the names of all pilots with age between 30 and 40 sorted by their ages in ascending order.
+Correct DB : pilot_1
+Predicted  : pilot_record  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.077
+Misleading components: ['semantic']
+
+Q: List all pilot names sorted by their ages in the descending order.
+Correct DB : pilot_1
+Predicted  : pilot_record  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the average and minimum ages across all pilots.
+Correct DB : pilot_1
+Predicted  : aircraft  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of entries for each plane name.
+Correct DB : pilot_1
+Predicted  : aircraft  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Find the max age for each group of pilots with the same name.
+Correct DB : pilot_1
+Predicted  : aircraft  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Find the names and populations of the districts whose area is greater than the average area.
+Correct DB : district_spokesman
+Predicted  : store_product  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['semantic']
+
+Q: How many races are there?
+Correct DB : car_road_race
+Predicted  : race_track  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the maximum and minimum age across drivers.
+Correct DB : car_road_race
+Predicted  : school_bus  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all names of drivers in descending alphabetical order.
+Correct DB : car_road_race
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List different constructors and the number of drivers that use each constructor.
+Correct DB : car_road_race
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: How many drivers use each constructor?
+Correct DB : car_road_race
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'semantic']
+
+Q: List the most common type of engine used by drivers.
+Correct DB : car_road_race
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the most common type of engine?
+Correct DB : car_road_race
+Predicted  : car_1  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Show the constructors that are used both by drivers with age lower than 20 and drivers with age over than 30.
+Correct DB : car_road_race
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.077
+Misleading components: ['semantic']
+
+Q: In which states are each of the the properties located?
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Give the states or provinces corresponding to each property.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are the feature name and description of the most commonly seen feature across properties?
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the feature name and description for the most common feature across all properties.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: On average, how many rooms do properties with garden features have?
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: In which cities are there any properties equipped with a swimming pool?
+Correct DB : real_estate_rentals
+Predicted  : swimming  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Which property had the lowest price requested by the vendor? List the id and the price.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the ids of users who have searched at least twice, and what did they search?
+Correct DB : real_estate_rentals
+Predicted  : document_management  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Return the ids of users who have performed two or more searches, as well as their search sequence.
+Correct DB : real_estate_rentals
+Predicted  : document_management  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are all the user searches time and content? Sort the result descending by content.
+Correct DB : real_estate_rentals
+Predicted  : document_management  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Find the login names of all senior citizen users ordered by their first names.
+Correct DB : real_estate_rentals
+Predicted  : document_management  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Where do the Senior Citizens live? List building, street, and the city.
+Correct DB : real_estate_rentals
+Predicted  : apartment_rentals  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf']
+
+Q: What are the buildings, streets, and cities corresponding to the addresses of senior citizens?
+Correct DB : real_estate_rentals
+Predicted  : address_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many properties are there with at least 2 features?
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of properties with at least two features.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Give the total max price corresponding to any properties owned by single mothers or students.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the date stamps and property names for each item of property history, ordered by date stamp?
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Return the date stamp and property name for each property history event, sorted by date stamp.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is the description of the most common property type? List the description and code.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What is the most common property type, and what is its description.
+Correct DB : real_estate_rentals
+Predicted  : real_estate_properties  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are the different room sizes, and how many of each are there?
+Correct DB : real_estate_rentals
+Predicted  : inn_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the ids of goods that cost less than 3 dollars?
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['semantic']
+
+Q: What are all the distinct items bought by customer 15?
+Correct DB : bakery_1
+Predicted  : customers_and_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the item that was bought the least number of times?
+Correct DB : bakery_1
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: On which date did some customer buy a good that costs more than 15 dollars?
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Which date corresponds to when a customer purchased a good costing over 15 dollars?
+Correct DB : bakery_1
+Predicted  : department_store  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are all the ids of goods with an id which contains "APP"?
+Correct DB : bakery_1
+Predicted  : device  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Which good has "70" in its id? And what is its price?
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the id and price for the good with "70" in its id?
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Order the distinct good ids.
+Correct DB : bakery_1
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['tfidf', 'semantic']
+
+Q: Find the first name and last name of a customer who visited on the earliest date.
+Correct DB : bakery_1
+Predicted  : customers_card_transactions  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the full name of the customer who visited on the earliest date?
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Find the top three dates with the most receipts.
+Correct DB : bakery_1
+Predicted  : tracking_share_transactions  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Find the ids of customers whose average spending for each good is above 5.
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['semantic']
+
+Q: What are the ids of customers who spend more than 5 on average for each good?
+Correct DB : bakery_1
+Predicted  : products_for_hire  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.083
+Misleading components: ['bm25', 'semantic']
+
+Q: How many drivers are there?
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the average laps of all the drivers who are younger than 20?
+Correct DB : car_racing
+Predicted  : car_road_race  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the list of drivers ordered by points in descending order?
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Please show the names of drivers, and countries they are from.
+Correct DB : car_racing
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: List the make that are associated with most drivers.
+Correct DB : car_racing
+Predicted  : car_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which make does the most drivers have?
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: Show total and average points of all drivers.
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are the total and average points of drivers?
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: List the names of institutions in ascending alphabetical order.
+Correct DB : institution_sports
+Predicted  : protein_institute  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: List the names of institutions in ascending order of founded year.
+Correct DB : institution_sports
+Predicted  : conference  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the names of institutions, ordered by the years in which they were founded?
+Correct DB : institution_sports
+Predicted  : conference  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the most common type of affiliation for institutions?
+Correct DB : institution_sports
+Predicted  : protein_institute  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the maximum, average, and minimum enrollment for universities?
+Correct DB : university_rank
+Predicted  : csu_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the maximum, average, and minimum enrollment for all universities?
+Correct DB : university_rank
+Predicted  : university_basketball  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: List team name for all universities with enrollments above the average.
+Correct DB : university_rank
+Predicted  : university_basketball  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the names of all teams from universities that have more people enrolled than average ?
+Correct DB : university_rank
+Predicted  : university_basketball  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show all home conferences.
+Correct DB : university_rank
+Predicted  : university_basketball  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Which conference has the least number of total enrollment?
+Correct DB : university_rank
+Predicted  : conference  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the home conferences with the fewest number of people enrolled?
+Correct DB : university_rank
+Predicted  : conference  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Find the name of the theater that is playing the most number of movies.
+Correct DB : movie_2
+Predicted  : cinema  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the name of the film playing at the most number of theaters?
+Correct DB : movie_2
+Predicted  : cinema  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the names of all cinemas not showing any movies?
+Correct DB : movie_2
+Predicted  : cinema  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of theaters playing 'G' rated movies?
+Correct DB : movie_2
+Predicted  : cre_Theme_park  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is all the information about the unrated movies?
+Correct DB : movie_2
+Predicted  : movie_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is the position of Amy Wong?
+Correct DB : planet_1
+Predicted  : club_1  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is Turanga Leela's salary and position?
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25']
+
+Q: What is the average salary of an intern?
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What level is Physician?
+Correct DB : planet_1
+Predicted  : hospital_1  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: List Package Number of all package sent by Leo Wong?
+Correct DB : planet_1
+Predicted  : chinook_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What is the number of all packages that Leo Wong sent?
+Correct DB : planet_1
+Predicted  : chinook_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: List all package numbers received by Leo Wong ?
+Correct DB : planet_1
+Predicted  : chinook_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are all of the package numbers received by Leo Wong?
+Correct DB : planet_1
+Predicted  : chinook_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are all the different package numbers that Leo Wong sent or received?
+Correct DB : planet_1
+Predicted  : chinook_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['semantic']
+
+Q: Count the number of packages sent by Ogden Wernstrom and received by Leo Wong.
+Correct DB : planet_1
+Predicted  : tracking_grants_for_research  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many packages sent by Ogden Wernstrom and received by Leo Wong?
+Correct DB : planet_1
+Predicted  : chinook_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What is the name of all clients who sent more than one package?
+Correct DB : planet_1
+Predicted  : advertising_agencies  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'semantic']
+
+Q: List all Planets' names and coordinates in alphabetical order of name.
+Correct DB : planet_1
+Predicted  : car_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: List all shipment id under Phillip J. Fry's management.
+Correct DB : planet_1
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the shipment IDs of every delivery managed by Phillip J Fry?
+Correct DB : planet_1
+Predicted  : customer_deliveries  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the dates of every shipment in the database?
+Correct DB : planet_1
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the manger's name and number of shipments under his management.
+Correct DB : planet_1
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the number of shipments managed and names of each manager?
+Correct DB : planet_1
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which employees have salaries between 5000 and 10000? List employees' name.
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the employees's names for those that have salaries between 5000 and 10000?
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of all employees who have a salary greater than average or more than 5000?
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.077
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many games are there?
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the maximum and minimum rank of the year of players.
+Correct DB : video_game
+Predicted  : riding_club  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of players that have a rank of year of at most 3.
+Correct DB : video_game
+Predicted  : soccer_3  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: List the name of players that do not play any game.
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'semantic']
+
+Q: Show the title of games that are played by both players from college "Oklahoma" and players from college "Auburn".
+Correct DB : video_game
+Predicted  : match_season  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the titles of games that are played by players from Oklahoma college or Auburn college?
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 3)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['semantic']
+
+Q: What are all the distinct franchises?
+Correct DB : video_game
+Predicted  : university_basketball  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf']
+
+Q: Show the title of games that are not played by any player who is in the Guard position.
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: What are the titles of games not played by any players who play the Guard position?
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.083
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all book titles in the order of their release date from the most recent to the past.
+Correct DB : book_press
+Predicted  : book_review  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf']
+
+Q: Sort all the books in descending order of release date, and return the book titles.
+Correct DB : book_press
+Predicted  : book_review  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Find the name and age of the authors who do not have any book in the record.
+Correct DB : book_press
+Predicted  : book_1  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['semantic']
+
+Q: Find the names of authors who have more than one book in the database.
+Correct DB : book_press
+Predicted  : book_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'semantic']
+
+Q: Which authors have published more than 1 book according to the database? Give me their names.
+Correct DB : book_press
+Predicted  : book_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.071
+Misleading components: ['bm25', 'semantic']
+
+Q: Which authors have never published under the "Accor" press? Give me their names.
+Correct DB : book_press
+Predicted  : icfp_1  (rank of correct: 2)
+Categories : NEAR_MISS, VOCAB_DIVERGENCE
+Query-schema overlap: 0.083
+Misleading components: ['semantic']
+
+Q: What are the details for the staff member with id 100.
+Correct DB : cre_Doc_Workflow
+Predicted  : insurance_and_eClaims  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many invoices do we have?
+Correct DB : advertising_agencies
+Predicted  : customers_and_invoices  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['semantic']
+
+Q: What are the ids, statuses, and details for all invoices?
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Show all invoice status codes and the number of invoices with each status.
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many invoices are there for each status code?
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: Return the invoice status that has the most invoices.
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many payments do we have?
+Correct DB : advertising_agencies
+Predicted  : insurance_policies  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the distinct invoice ids and statuses for all payments?
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: What is the invoice id, status code, and details for the invoice with most number of payments.
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 3)
+Categories : NEAR_MISS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the invoice ids, statuses, and details for invoices with the most payments?
+Correct DB : advertising_agencies
+Predicted  : tracking_orders  (rank of correct: 2)
+Categories : NEAR_MISS
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many staff do we have?
+Correct DB : advertising_agencies
+Predicted  : cre_Doc_Workflow  (rank of correct: 3)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of staff.
+Correct DB : advertising_agencies
+Predicted  : cre_Doc_Workflow  (rank of correct: 2)
+Categories : NEAR_MISS, AMBIGUOUS
+Misleading components: ['tfidf', 'semantic']
+
+Q: List the id, first name and last name of the customers who both have placed more than 2 orders and have bought at least 3 items.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 7)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: What are the ids, first and last names of the customers who have ordered more than twice and have bought at least 3 items?
+Correct DB : e_commerce
+Predicted  : customer_complaints  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the dates of the orders which were placed at the earliest time or have more than 1 items.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 7)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the dates of the earliest order and the dates of all orders with more than 1 item?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which orders have at least 2 products on it? List the order id and date.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the ids and dates of the orders with at least two products?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the payment method that most customers use?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many orders has each gender of customers placed?
+Correct DB : e_commerce
+Predicted  : department_store  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: List all the distinct product names, price and descriptions which are bought by female customers.
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the different names, prices, and descriptions for all products bought by female customers?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many customers have placed any order?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 10)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many item states are there in the orders?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many different payment methods are there?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: How many different payment methods can customers choose from?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 7)
+Categories : OTHER
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the prices and sizes of all products whose price is above the mean?
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'semantic']
+
+Q: How many kinds of products have not been sold?
+Correct DB : e_commerce
+Predicted  : products_gen_characteristics  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the number of products that have not been ordered yet?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['tfidf', 'semantic']
+
+Q: How many customers do not have any payment method?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 9)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many customers do not have a listed payment method?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 9)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the status codes and dates placed for all of the orders?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the address, town and county information of the customers who live in the USA.
+Correct DB : e_commerce
+Predicted  : customers_and_addresses  (rank of correct: 9)
+Categories : OTHER
+Misleading components: ['tfidf', 'semantic']
+
+Q: What are the addresses, towns, and county information for all customers who live in the United States?
+Correct DB : e_commerce
+Predicted  : customers_and_addresses  (rank of correct: 9)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List the order date of the orders who are placed by customers with at least 2 payment methods.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 10)
+Categories : OTHER
+Misleading components: ['tfidf', 'semantic']
+
+Q: What is the date of all orders that have been placed by customers with at least 2 payment methods?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 9)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: List the invoice dates and ids of the invoices causing at least 2 shipments.
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Please show the first names of students and the dates of their answers.
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: Which students do not have any answers? Find their first names.
+Correct DB : online_exams
+Predicted  : student_1  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: What is al the available information of each student?
+Correct DB : online_exams
+Predicted  : cre_Students_Information_Systems  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the minimum, average, maximum price for all products.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the minimum, average, and maximum prices across all products?
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of Hardware product with prices above the average price of Hardware products.
+Correct DB : customers_and_orders
+Predicted  : products_gen_characteristics  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'semantic']
+
+Q: What is the name and age of the customer with the most membership credit?
+Correct DB : vehicle_rent
+Predicted  : restaurant_bills  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: Return the average age for customers who have membership above the average across all customers.
+Correct DB : vehicle_rent
+Predicted  : coffee_shop  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: What are the names of customers who have two or more records of rental history?
+Correct DB : vehicle_rent
+Predicted  : apartment_rentals  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['bm25', 'semantic']
+
+Q: How many courses do teachers teach at most? Also find the id of the teacher who teaches the most.
+Correct DB : cre_Students_Information_Systems
+Predicted  : course_teach  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many courses do students take at most? Also find the id of the student who takes the most courses.
+Correct DB : cre_Students_Information_Systems
+Predicted  : e_learning  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which students take 2 courses? List student id and details.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_assessment  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: For each student, find the student id, student biographical data, and the number of courses he or she takes.
+Correct DB : cre_Students_Information_Systems
+Predicted  : student_assessment  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf']
+
+Q: List all book titles which have highest purchase prices .
+Correct DB : book_1
+Predicted  : book_2  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf']
+
+Q: What is the title of the book written by George Orwell that has the lowest sale price?
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many orders do we have for "Pride and Prejudice"?
+Correct DB : book_1
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the customers with total quantity of order bigger than 1.
+Correct DB : restaurant_bills
+Predicted  : customers_and_orders  (rank of correct: 7)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which customers have total order quantity greater than 1? Give me the customer names.
+Correct DB : restaurant_bills
+Predicted  : customers_and_orders  (rank of correct: 9)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which customers do not have any order? Give me the customer names.
+Correct DB : restaurant_bills
+Predicted  : customers_and_orders  (rank of correct: 10)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all states and number of cities in each state.
+Correct DB : address_1
+Predicted  : voter_1  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show the first name and the last name for students living in state MD.
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What the the student ids for students not living in the USA?
+Correct DB : address_1
+Predicted  : student_transcripts_tracking  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the student ids for female students in the state of PA?
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which state does the student whose first name is Linda live in?
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the state that the student with first name Linda lives in.
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all staff name who are above the average age.
+Correct DB : conference
+Predicted  : museum_visit  (rank of correct: 8)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: What is the maximum and minimum age of all staff from the United States?
+Correct DB : conference
+Predicted  : museum_visit  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: What was the registration date for the user whose login name is ratione?
+Correct DB : real_estate_rentals
+Predicted  : e_learning  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: In which country does the user with first name Robbie live?
+Correct DB : real_estate_rentals
+Predicted  : yelp  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: Return the country in which the user with first name Robbie lives.
+Correct DB : real_estate_rentals
+Predicted  : world_1  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: List the last names of all customers in an alphabetical order.
+Correct DB : bakery_1
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the last names of the customers in alphabetical order?
+Correct DB : bakery_1
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf']
+
+Q: For each date, return how many distinct customers visited on that day.
+Correct DB : bakery_1
+Predicted  : customers_campaigns_ecommerce  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all the driver names in ascending order of age.
+Correct DB : car_racing
+Predicted  : vehicle_driver  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the maximum and minimum enrollment of all institutions?
+Correct DB : institution_sports
+Predicted  : university_basketball  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf']
+
+Q: Return the maximum and minimum enrollment across all institutions.
+Correct DB : institution_sports
+Predicted  : university_basketball  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the most common type of affiliation across all institutions.
+Correct DB : institution_sports
+Predicted  : university_basketball  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What is the average salary of all intern jobs?
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all package sent or received by Leo Wong.
+Correct DB : planet_1
+Predicted  : tracking_grants_for_research  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Who sent most number of packages? List client name and number of packages sent by that client.
+Correct DB : planet_1
+Predicted  : tracking_grants_for_research  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: Give the maximum and minimum rank of the year across all players.
+Correct DB : video_game
+Predicted  : riding_club  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'semantic']
+
+Q: How many players have rank of the year smaller than 3?
+Correct DB : video_game
+Predicted  : riding_club  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['bm25', 'semantic']
+
+Q: List all player names in ascending alphabetical order.
+Correct DB : video_game
+Predicted  : match_season  (rank of correct: 6)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: List names and colleges of all players in descending order of rank of the year.
+Correct DB : video_game
+Predicted  : match_season  (rank of correct: 5)
+Categories : OTHER
+Misleading components: ['semantic']
+
+Q: What are the names and colleges of all players, ordered by rank of year descending?
+Correct DB : video_game
+Predicted  : decoration_competition  (rank of correct: 4)
+Categories : OTHER
+Misleading components: ['bm25', 'semantic']
+
+Q: Which customers did not make any orders? List the first name, middle initial and last name.
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: 4)
+Categories : SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['semantic']
+
+Q: WHat are the first and last names, and middle initials of all customers who did not make any orders?
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: 4)
+Categories : SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['semantic']
+
+Q: What are the login names and passwords of the customers whose phone number have the prefix '+12'?
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: 4)
+Categories : SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['semantic']
+
+Q: What are the usernames and passwords of all customers whose phone number starts with '+12'?
+Correct DB : e_commerce
+Predicted  : customers_and_invoices  (rank of correct: 6)
+Categories : SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.5
+Misleading components: ['semantic']
+
+Q: What are the email addresses, cities, and counties listed for all cusomters who are from the gender that orders less often?
+Correct DB : e_commerce
+Predicted  : customers_and_products_contacts  (rank of correct: 6)
+Categories : SCHEMA_CONFUSION
+Schema similarity (Jaccard): 0.451
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many addresses do we have?
+Correct DB : customers_and_orders
+Predicted  : customers_and_addresses  (rank of correct: 7)
+Categories : SCHEMA_CONFUSION, AMBIGUOUS
+Schema similarity (Jaccard): 0.424
+Misleading components: ['bm25', 'semantic']
+
+Q: Count the number of customers.
+Correct DB : customers_and_orders
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : SCHEMA_CONFUSION, AMBIGUOUS
+Schema similarity (Jaccard): 0.4
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of clubs, ordered alphabetically?
+Correct DB : soccer_3
+Predicted  : club_leader  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: List the name of clubs that do not have players.
+Correct DB : soccer_3
+Predicted  : club_leader  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the ids, names, and prices of all products that are ordered most frequently?
+Correct DB : e_commerce
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of the products tht have been shipped, and on what days were they shipped?
+Correct DB : e_commerce
+Predicted  : tracking_orders  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['semantic']
+
+Q: Show the distinct addresses of buildings.
+Correct DB : region_building
+Predicted  : apartment_rentals  (rank of correct: 7)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Which teacher teaches the most courses? Give me the id of the teacher and the number of courses he or she teaches.
+Correct DB : cre_Students_Information_Systems
+Predicted  : course_teach  (rank of correct: 5)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Which student is taking the most courses? Give me the id of the student and the number of courses he or she is taking.
+Correct DB : cre_Students_Information_Systems
+Predicted  : e_learning  (rank of correct: 6)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are the names of all the authors?
+Correct DB : book_1
+Predicted  : scholar  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: List all book titles which have sale prices higher than the average.
+Correct DB : book_1
+Predicted  : book_press  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many customers are there?
+Correct DB : restaurant_bills
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show distinct managers of branches.
+Correct DB : restaurant_bills
+Predicted  : railway  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: List all different states .
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 8)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: What are all the distinct states?
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 9)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Show names, codes, states, countries for all cities.
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of cities in Canada.
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 8)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Show all countries and number of cities in each .
+Correct DB : address_1
+Predicted  : world_1  (rank of correct: 5)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the full names of students living in MD?
+Correct DB : address_1
+Predicted  : student_1  (rank of correct: 10)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of students living in China.
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 9)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show all states where more than 5 students live.
+Correct DB : address_1
+Predicted  : student_transcripts_tracking  (rank of correct: 8)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the states with more than 5 students?
+Correct DB : address_1
+Predicted  : geo  (rank of correct: 6)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Show ids for all students who don't live in USA.
+Correct DB : address_1
+Predicted  : student_assessment  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How far do Linda (first name) Smith (last name) and Tracy (first name) Kim (last name) live?
+Correct DB : address_1
+Predicted  : network_2  (rank of correct: 8)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What is the full name of the student who lives furthest from Linda Smith?
+Correct DB : address_1
+Predicted  : network_1  (rank of correct: 9)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of authors.
+Correct DB : aan_1
+Predicted  : book_1  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Count the number of papers.
+Correct DB : aan_1
+Predicted  : document_management  (rank of correct: 10)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: How many papers does Columbia University have in or before 2009 ?
+Correct DB : aan_1
+Predicted  : university_rank  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: What are the names of all staff members who are older than average?
+Correct DB : conference
+Predicted  : coffee_shop  (rank of correct: 5)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf']
+
+Q: Count the number of races.
+Correct DB : car_road_race
+Predicted  : world_1  (rank of correct: 10)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the names of drivers, ordered descending alphabetically?
+Correct DB : car_road_race
+Predicted  : vehicle_driver  (rank of correct: 7)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Find the teams that won more than once.
+Correct DB : car_road_race
+Predicted  : match_season  (rank of correct: 10)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Return the names of langauges that contain the substring "ish".
+Correct DB : country_language
+Predicted  : sing_contest  (rank of correct: 5)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Give me a list of all the distinct items bought by the customer number 15.
+Correct DB : bakery_1
+Predicted  : customers_and_orders  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf']
+
+Q: Which customer shopped most often? How many times?
+Correct DB : bakery_1
+Predicted  : customers_campaigns_ecommerce  (rank of correct: 5)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Give the customer id of the customer that made the most purchases, as well as the number of purchases made.
+Correct DB : bakery_1
+Predicted  : customers_and_orders  (rank of correct: 7)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Find the ids of customers who have spent more than 150 dollars in total.
+Correct DB : bakery_1
+Predicted  : museum_visit  (rank of correct: 9)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.091
+Misleading components: ['bm25', 'tfidf']
+
+Q: What are the names of institutions, ordered alphabetically?
+Correct DB : institution_sports
+Predicted  : protein_institute  (rank of correct: 9)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: Return the names of institutions, as well as their nicknames.
+Correct DB : institution_sports
+Predicted  : protein_institute  (rank of correct: 5)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
+
+Q: Who sent more than one packages? List the client's name.
+Correct DB : planet_1
+Predicted  : advertising_agencies  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['tfidf']
+
+Q: Find the name of employees whose salary is above the average salary or more than 5000.
+Correct DB : planet_1
+Predicted  : hr_1  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.1
+Misleading components: ['bm25', 'tfidf', 'semantic']
+
+Q: Count the number of games.
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 10)
+Categories : VOCAB_DIVERGENCE, AMBIGUOUS
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the names of all players in alphabetical order?
+Correct DB : video_game
+Predicted  : match_season  (rank of correct: 7)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['semantic']
+
+Q: What are the names of players who do not play any games?
+Correct DB : video_game
+Predicted  : game_1  (rank of correct: 4)
+Categories : VOCAB_DIVERGENCE
+Query-schema overlap: 0.0
+Misleading components: ['bm25', 'semantic']
