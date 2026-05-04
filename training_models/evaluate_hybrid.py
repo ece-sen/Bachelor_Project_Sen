@@ -101,9 +101,9 @@ if __name__ == "__main__":
     # Model 4: MLP fusion
   
     if Path(CKPT_MLP_V2).exists():
-            print("Evaluating Model 4 — MLP fusion v2 (BM25+TF-IDF+GTE)...")
+            print("Evaluating Model 4 — MLP fusion (BM25+TF-IDF+GTE)...")
             mlp_selector = MLPFusionSelector(bm25, tfidf, semantic_base, CKPT_MLP_V2)
-            results.append(run_eval("MLP fusion v2 (BM25+TF-IDF+GTE)", mlp_selector, test_qs))
+            results.append(run_eval("MLP fusion (BM25+TF-IDF+GTE)", mlp_selector, test_qs))
     else:
         print(f"Skipping Model 4 — checkpoint not found: {CKPT_MLP_V2}")
 
